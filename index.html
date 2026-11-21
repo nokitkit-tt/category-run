@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Category Run · Nat Habit</title>
+<meta name="description" content="Nat Habit is hiring a Sr Category Growth Associate in Gurugram. Six timed levels, about 30 minutes. Apply by playing.">
+<meta property="og:title" content="The Category Run · Nat Habit is hiring">
+<meta property="og:description" content="Six timed levels. About 30 minutes. Can you think like someone who runs a D2C category?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centred game column, sticky HUD on top, each screen is a card that swaps in place. */
+:root{
+  --bg:#ffffff; --panel:#ffffff; --panel2:#faf7f4; --field:#ffffff; --line:#ebe4dc;
+  --fg:#1f1b18; --muted:#6f6760; --accent:#b4532a; --accent-soft:#f8ece5; --accent-ink:#ffffff;
+  --warn:#b4532a; --ok:#3f7d4f;
+  --display:"Inter Tight", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --body:"Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono:"Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);min-height:100vh;font-variant-numeric:tabular-nums}
+.r{color:var(--accent)}
+[hidden]{display:none!important}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+/* HUD */
+.hud{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hud-in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px;padding-block:10px;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+.brand{font:600 15px/1 var(--display);letter-spacing:.01em;white-space:nowrap}
+.brand small{display:block;font:500 11px/1.3 var(--body);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.pips{display:flex;gap:5px;flex:1;justify-content:center;min-width:0}
+.pip{width:22px;height:6px;border-radius:3px;background:var(--line)}
+.pip.done{background:var(--fg)} .pip.now{background:var(--accent)}
+.xp{font:600 13px/1 var(--display);color:var(--accent);white-space:nowrap}
+.xp span{color:var(--muted);font-weight:500}
+/* type */
+h1{font:700 clamp(42px,8.5vw,76px)/1 var(--display);letter-spacing:-.035em;margin:10px 0 14px;text-wrap:balance}
+h2{font:600 clamp(24px,4.6vw,32px)/1.15 var(--display);letter-spacing:-.02em;margin:6px 0 10px;text-wrap:balance}
+h3{font:600 18px/1.3 var(--display);margin:0 0 6px}
+p{margin:0 0 12px}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* blocks */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;color:var(--fg);background:var(--panel2)}
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.lv{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel2);min-width:0}
+.lv b{display:block;font:600 15px/1.25 var(--display)}
+.lv .n{font:600 11.5px/1 var(--display);letter-spacing:.08em;color:var(--accent)}
+.lv .t{font-size:12.5px;color:var(--muted)}
+@media (max-width:560px){.levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.counter{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.counter .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(180,83,42,.15);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(180,83,42,0)}}
+.counter b{color:var(--fg);font-family:var(--mono)}
+/* buttons */
+.btn{appearance:none;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 15px/1 var(--display);padding:15px 24px;letter-spacing:.01em;cursor:pointer;transition:transform .12s, filter .12s}
+.btn:hover{filter:brightness(1.08)} .btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn:focus-visible,.opt:focus-visible,input:focus-visible,textarea:focus-visible,.mv:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+/* forms */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;min-width:0}
+label.f .hint{font-weight:400;color:var(--muted);font-size:12.5px}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=url],textarea{width:100%;background:var(--field);border:1px solid var(--line);border-radius:10px;color:var(--fg);font:16px/1.45 var(--body);padding:11px 12px}
+textarea{resize:vertical;min-height:120px}
+input::placeholder,textarea::placeholder{color:#a89f97}
+.seg{display:flex;gap:8px}
+.seg label{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:11px;cursor:pointer;font-weight:600;background:var(--field)}
+.seg input{accent-color:var(--accent)}
+.seg label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.file{border:1.5px dashed var(--line);border-radius:12px;padding:16px;text-align:center;cursor:pointer;background:var(--field)}
+.file.has{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+.flag{border-left:3px solid var(--warn);background:var(--accent-soft);padding:10px 12px;border-radius:8px;font-size:14px}
+.err{color:var(--warn);font-size:13px;min-height:1em}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted)}
+.consent input{margin-top:4px;accent-color:var(--accent)}
+/* game */
+.timerbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.fill{height:100%;background:var(--accent);width:100%;transition:width 1s linear}
+.timerbar.low .fill{background:var(--warn)}
+.clock{font:600 20px/1 var(--display);min-width:64px;text-align:right}
+.timerbar.low .clock{color:var(--warn)}
+.q{font:600 19px/1.45 var(--body)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:560px){.opts{grid-template-columns:1fr}}
+.opt{appearance:none;text-align:left;border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:12px;padding:14px 16px;font:600 16px/1.35 var(--body);cursor:pointer;display:flex;gap:12px;align-items:center}
+.opt .k{font:600 13px/1 var(--display);color:var(--accent);border:1px solid var(--line);border-radius:6px;padding:5px 7px}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.ideas{font:600 15px/1 var(--display);color:var(--accent)}
+.pop{position:fixed;right:20px;top:64px;font:700 20px/1 var(--display);color:var(--accent);pointer-events:none;animation:pop .9s ease-out forwards}
+@keyframes pop{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-36px)}}
+.bets{display:flex;flex-direction:column;gap:8px}
+.bet{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:12px}
+.bet .rk{font:700 22px/1 var(--display);color:var(--accent);min-width:26px}
+.bet .tx{flex:1;min-width:0;font-size:14.5px}
+.bet .tx b{display:block;font-size:15px;margin-bottom:2px}
+.mvs{display:flex;flex-direction:column;gap:4px}
+.mv{appearance:none;width:34px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--field);color:var(--fg);cursor:pointer;font-size:14px}
+.mv:disabled{opacity:.3;cursor:default}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:14px}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{font:600 12px/1.3 var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;background:var(--panel2)}
+tr:last-child td{border-bottom:0}
+.wc{font:500 12px/1 var(--mono);color:var(--muted);text-align:right}
+.wc.over{color:var(--warn)}
+.mine{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:12px;max-height:180px;overflow:auto;font-size:14px;white-space:pre-wrap;color:var(--muted)}
+.big{font:700 clamp(52px,13vw,100px)/1 var(--display);letter-spacing:-.04em;color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat b{display:block;font:600 26px/1 var(--display);margin-bottom:6px}
+.stat span{font-size:13px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--warn);color:#fff;font:600 14px/1.3 var(--body);padding:12px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;max-width:calc(100% - 32px);text-align:center;z-index:20}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.foot{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center}
+.fade{animation:in .35s ease-out}
+@keyframes in{from{opacity:.0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="hud"><div class="hud-in">
+  <div class="brand">The Category <span class="r">Run.</span><small>Nat Habit is hiring</small></div>
+  <div class="pips" id="pips" aria-hidden="true"></div>
+  <div class="xp" id="xp" aria-live="polite">0 <span>XP</span></div>
+</div></div>
+
+<main class="wrap" id="app"></main>
+
+<script>
+/* ======= CONFIG ======= */
+const API_URL = "https://script.google.com/macros/s/AKfycbyyQtAg5Gkm7iMOVgp_JOZR16tkrMP8O05ym8z_R3EA5MHeSRwVm38Ua33lsUOTvJGJ/exec";
+const SHOW_COUNT_FROM = 25;
+const KEY = "ncr_run_v1", BLOCK_KEY = "ncr_block_v1";
+
+/* ======= CONTENT ======= */
+const LEVELS = [
+  {id:"L1", name:"Speed Round", time:"6 × 45 sec", tests:"Quick maths", intro:"Six money questions, 45 seconds each. Tap an answer and it's locked. Calculator allowed, GST ignored, panic optional."},
+  {id:"L2", name:"Brain Dump", time:"3 min", tests:"Going wide", intro:"One mystery, three minutes. Write every reason you can think of, one per line. Wild ones count too. Every idea earns XP."},
+  {id:"L3", name:"Triage", time:"4 min", tests:"Structure", intro:"Your Level 2 list comes back. You only get time for three checks. Which ones, in what order, and what number would you pull for each?"},
+  {id:"L4", name:"Pick Your Bets", time:"5 min", tests:"Prioritising", intro:"Six ideas from one very excited team meeting. Rank them from best bet to worst, then defend your top pick and roast your bottom one."},
+  {id:"L5", name:"The Channel Case", time:"10 min", tests:"Depth", intro:"Four channels, one ₹1 Cr pot, and everyone wants a slice. Do the maths, make the call, and tell us what could prove you wrong."},
+  {id:"L6", name:"Gut Check", time:"3 × 30 sec", tests:"Judgement", intro:"Three quick calls, 30 seconds each. Pick a side and give a one-line reason. No sitting on the fence."}
+];
+
+const SPEED = [
+  {q:"Sale season. Your serum's MRP is ₹500, it's running at 20% off, and it costs ₹100 to make. What's your gross margin on what the customer actually paid?", o:["80%","75%","70%","60%"]},
+  {q:"50,000 people land on your website today. 2% of them buy, and each spends ₹600. How much money came in?", o:["₹60 lakh","₹1.2 lakh","₹6 lakh","₹3 lakh"]},
+  {q:"You spent ₹600 to win Priya as a customer. She orders 3 times this year at ₹500 an order, and you keep 70% of each order after product cost. What's she worth to you after taking off that ₹600?", o:["₹1,050","₹450","₹900","−₹100"]},
+  {q:"Your Amazon ads: ₹2 lakh spent at a ROAS of 4. You keep 60% of revenue after product cost, and Amazon takes 25% of revenue for commission and shipping. What's left in your pocket?", o:["₹4.8 lakh","₹2.8 lakh","₹0.8 lakh","−₹1.2 lakh"]},
+  {q:"Your ₹300 shampoo costs ₹90 to make. You raise the price 10% and lose 8% of buyers. What happens to your gross profit in rupees?", o:["Falls about 8%","Roughly flat","Rises about 1%","Rises about 5%"]},
+  {q:"1,000 new customers in January. 30% come back by March, and 40% of those come back again by June. How many are on their 3rd order or more?", o:["120","400","70","300"]}
+];
+
+const DUMP_PROMPT = "Uh-oh. Your bestselling face wash sold 22% less on your own website this month. The same product on Amazon? Totally flat. What could be going on? Throw every possible reason at the wall.";
+
+const BETS = [
+  {k:"A", t:"Two new fragrance variants of the hero body lotion", d:"Estimated +₹3 Cr a year. Four months to launch. About 25% of their sales would come from the existing variant."},
+  {k:"B", t:"Fix the hero SKU's marketplace listing", d:"Rated 3.9★ against a category average of 4.2★. Converts at 1.8% where top rivals convert at 3%."},
+  {k:"C", t:"A two-week sitewide sale at 30% off", d:"Last time: sales ran at 2.5× during the sale, then dropped 40% for the three weeks after."},
+  {k:"D", t:"₹99 trial packs on quick commerce in 6 metros", d:"35% gross margin on the trial pack. Quick commerce is your fastest-growing channel."},
+  {k:"E", t:"50 micro-influencers a month", d:"Today, influencer-driven orders cost ₹420 each. AOV is ₹550."},
+  {k:"F", t:"A 7% price increase on the top 3 SKUs", d:"These are 60% of revenue. Close rivals are priced 10 to 15% higher."}
+];
+
+const CHANNELS = [
+  ["Own website", "35%", "+1%", "72%", "14%", "36%", "28%"],
+  ["Amazon", "40%", "+3%", "66%", "30%", "17%", "Not visible"],
+  ["Quick commerce", "15%", "+12%", "60%", "34%", "9%", "Not visible"],
+  ["Nykaa & others", "10%", "0%", "63%", "32%", "14%", "Not visible"]
+];
+
+const GUT = [
+  {q:"A creator with 3 million followers wants ₹25 lakh for one reel. Your whole month's marketing budget is ₹80 lakh.", o:["Take it","Pass"]},
+  {q:"Your bestseller slid from 4.5★ to 4.1★ in three weeks. Your first phone call goes to:", o:["Operations","Customer support","Product / R&D"]},
+  {q:"Your new product idea: launch now at 70% sure, or wait four months to be 90% sure?", o:["Launch now","Wait 4 months"]}
+];
+
+/* ======= STATE ======= */
+const STEPS = ["intro","gate","L1","L2","L3","L4","L5","L6","done"];
+function fresh(){return {step:"intro", id:null, profile:{}, a:{speed:[],dump:"",triage:"",bets:BETS.map(b=>b.k),betsWhy:"",caseMaths:"",caseSplit:"",caseMissing:"",gut:[]}, xp:0, t0:null, tabs:0, pastes:0, reloads:0, sent:false, levelLive:false};}
+let S = load() || fresh();
+function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY, JSON.stringify(S))}catch(e){}}
+const $ = (s, r=document)=>r.querySelector(s);
+const app = $("#app");
+let TIMER = null;
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function words(s){return (s.trim().match(/\S+/g)||[]).length}
+function lines(s){return s.split(/\n+/).map(x=>x.trim()).filter(Boolean)}
+
+function hud(){
+  const i = STEPS.indexOf(S.step);
+  $("#pips").innerHTML = LEVELS.map((l,k)=>{const idx=k+2; return `<span class="pip ${i>idx?"done":i===idx?"now":""}"></span>`}).join("");
+  $("#xp").innerHTML = `${S.xp} <span>XP</span>`;
+}
+function addXP(n){S.xp+=n; save(); hud(); const p=document.createElement("div"); p.className="pop"; p.textContent=`+${n}`; document.body.appendChild(p); setTimeout(()=>p.remove(),950);}
+
+function go(step){clearInterval(TIMER); S.step=step; S.levelLive=false; save(); render(); window.scrollTo({top:0});}
+
+/* tab switch + paste tracking during levels */
+document.addEventListener("visibilitychange",()=>{ if(document.hidden && S.levelLive){S.tabs++; save();} });
+function noPaste(e){
+  if(!S.levelLive) return;
+  const t=e.target; if(!t || !/^(TEXTAREA|INPUT)$/.test(t.tagName)) return;
+  e.preventDefault(); S.pastes++; save(); toast("Pasting is off here. Type it out, in your own words.");
+}
+document.addEventListener("paste",noPaste,true);
+document.addEventListener("drop",noPaste,true);
+document.addEventListener("beforeinput",e=>{ if(/insertFromPaste|insertFromDrop|insertFromYank/.test(e.inputType||"")) noPaste(e); },true);
+document.addEventListener("keydown",e=>{ if(S.levelLive && /^(TEXTAREA|INPUT)$/.test(e.target.tagName) && e.key.length===1){S.keys=(S.keys||0)+1;} },true);
+function toast(m){ let t=document.getElementById("toast"); if(!t){t=document.createElement("div"); t.id="toast"; t.className="toast"; t.setAttribute("role","status"); document.body.appendChild(t);} t.textContent=m; t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),2600); }
+
+/* ======= API ======= */
+const live = ()=>/^https:\/\/script\.google\.com\//.test(API_URL);
+async function post(body){
+  if(!live()){ console.log("[demo] would POST", body); return {ok:true, id:"demo-"+Date.now().toString(36), count:0}; }
+  const r = await fetch(API_URL,{method:"POST", body:JSON.stringify(body)});
+  return r.json();
+}
+async function getCount(){
+  if(!live()) return null;
+  try{const r=await fetch(API_URL); const j=await r.json(); return j.count;}catch(e){return null}
+}
+
+/* ======= TIMER ======= */
+function timer(sec, onEnd){
+  clearInterval(TIMER);
+  const bar=$("#tb"), fill=$("#tf"), clk=$("#tc");
+  const end=Date.now()+sec*1000;
+  const tick=()=>{
+    const left=Math.max(0, Math.round((end-Date.now())/1000));
+    clk.textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`;
+    fill.style.width=(left/sec*100)+"%";
+    bar.classList.toggle("low", left<=Math.min(15, sec*0.25));
+    if(left<=0){clearInterval(TIMER); onEnd();}
+  };
+  tick(); TIMER=setInterval(tick,250);
+}
+const timerHTML = `<div class="timerbar" id="tb"><div class="track"><div class="fill" id="tf"></div></div><div class="clock" id="tc">0:00</div></div>`;
+
+/* ======= SCREENS ======= */
+function render(){
+  hud();
+  const s=S.step;
+  if(s==="intro") return intro();
+  if(s==="gate") return gate();
+  if(s==="done") return done();
+  const lv = LEVELS.find(l=>l.id===s);
+  if(lv) return levelIntro(lv);
+}
+
+function intro(){
+  app.innerHTML = `<div class="stack fade">
+    <div><div class="eyebrow">Now hiring · Gurugram</div>
+    <h1>The Category <span class="r">Run.</span></h1>
+    <p class="muted" style="font-size:18px;max-width:58ch">Six levels. About 30 minutes. One question: can you think like someone who runs a category at a D2C beauty and personal care brand?</p></div>
+    <div class="counter" id="cnt" hidden><span class="dot"></span><span><b id="cntn"></b> people have taken the run</span></div>
+    <div class="card stack">
+      <div><div class="eyebrow">The role</div><h2 style="margin-bottom:4px">Sr Category <span class="r">Growth</span> Associate</h2><p class="muted small" style="margin:0">Nat Habit · Own a category's growth end to end: consumer, product, pricing, channels and P&L.</p></div>
+      <div class="row">
+        <span class="chip">Gurugram</span><span class="chip">6 days in office · 2nd &amp; 4th Saturdays off</span><span class="chip">1.5+ years experience</span><span class="chip">Joining within 15 days preferred</span>
+      </div>
+    </div>
+    <div class="levels">${LEVELS.map((l,i)=>`<div class="lv"><span class="n">LEVEL ${i+1}</span><b>${l.name}</b><span class="t">${l.time} · ${l.tests}</span></div>`).join("")}</div>
+    <div class="card small">
+      <h3>House rules</h3>
+      <p style="margin:0" class="muted">Timers are real and there's no going back once a level ends. A calculator is fine. Pasting is switched off in the answer boxes, so type it like you mean it. We note tab switches and read every answer ourselves. A laptop works best.</p>
+    </div>
+    <div><button class="btn" id="go">Start: tell us about you</button></div>
+  </div>`;
+  $("#go").onclick=()=>go("gate");
+  getCount().then(n=>{ if(n!=null && n>=SHOW_COUNT_FROM){ $("#cntn").textContent=n.toLocaleString("en-IN"); $("#cnt").hidden=false; } });
+}
+
+function gate(){
+  const p=S.profile;
+  app.innerHTML = `<form class="stack fade" id="gf" novalidate>
+    <div><div class="eyebrow">Level 0 · Check-in</div><h2>First, the <span class="r">basics.</span></h2><p class="muted">Two minutes. Then the clock starts.</p></div>
+    <div class="card stack">
+      <div class="grid2">
+        <label class="f">Full name<input id="g_name" type="text" autocomplete="name" required value="${esc(p.name||"")}"></label>
+        <label class="f">Email<input id="g_email" type="email" autocomplete="email" required value="${esc(p.email||"")}"></label>
+        <label class="f">Phone<span class="hint">10-digit mobile number</span><input id="g_phone" type="tel" inputmode="numeric" autocomplete="tel" required value="${esc(p.phone||"")}"></label>
+        <label class="f">Current city<span class="hint">Where you live today</span><input id="g_city" type="text" autocomplete="address-level2" required value="${esc(p.city||"")}"></label>
+      </div>
+      <label class="f">LinkedIn profile <span class="hint">Optional</span><input id="g_li" type="url" placeholder="https://linkedin.com/in/…" value="${esc(p.linkedin||"")}"></label>
+    </div>
+    <div class="card stack">
+      <div class="grid2">
+        <label class="f">Years of work experience<span class="hint">Full-time, after graduation</span><input id="g_exp" type="number" step="0.1" min="0" inputmode="decimal" required value="${esc(p.exp??"")}"></label>
+        <label class="f">Notice period (days)<span class="hint">0 if you can join right away</span><input id="g_notice" type="number" min="0" inputmode="numeric" required value="${esc(p.notice??"")}"></label>
+        <label class="f">Current CTC (LPA)<span class="hint">Fixed + variable, in lakhs a year</span><input id="g_cctc" type="number" step="0.1" min="0" inputmode="decimal" required value="${esc(p.cctc??"")}"></label>
+        <label class="f">Expected CTC (LPA)<span class="hint">In lakhs a year</span><input id="g_ectc" type="number" step="0.1" min="0" inputmode="decimal" required value="${esc(p.ectc??"")}"></label>
+      </div>
+      <div class="flag" id="nflag" hidden>Heads up: we're after early starters who can join within 15 days. You can carry on, but shorter notice helps.</div>
+      <div class="f" style="display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px">Happy to relocate to Gurugram and work 6 days from office (2nd &amp; 4th Saturdays off)?
+        <div class="seg" role="radiogroup"><label><input type="radio" name="reloc" value="Yes" ${p.relocate==="Yes"?"checked":""}> Yes</label><label><input type="radio" name="reloc" value="No" ${p.relocate==="No"?"checked":""}> No</label></div>
+      </div>
+    </div>
+    <div class="card stack">
+      <label class="file" id="fbox" for="g_cv"><input id="g_cv" type="file" accept=".pdf,.doc,.docx" hidden><b id="fname">Attach your CV</b><br><span class="muted small">PDF or Word, up to 5 MB</span></label>
+      <label class="consent"><input id="g_ok" type="checkbox"> <span>I'm OK with Nat Habit using these details only for this hiring process.</span></label>
+    </div>
+    <div class="err" id="gerr" role="alert"></div>
+    <div class="row"><button class="btn" id="gsub" type="submit">Lock in and start Level 1</button></div>
+  </form>`;
+  const nIn=$("#g_notice"), flag=$("#nflag");
+  const nchk=()=>{flag.hidden=!(Number(nIn.value)>15)}; nIn.oninput=nchk; nchk();
+  let cv=null;
+  $("#g_cv").onchange=e=>{
+    const f=e.target.files[0]; if(!f) return;
+    if(f.size>5*1024*1024){$("#gerr").textContent="That CV is over 5 MB. Please attach a smaller file."; return;}
+    cv=f; $("#fname").textContent=f.name; $("#fbox").classList.add("has"); $("#gerr").textContent="";
+  };
+  $("#gf").onsubmit=async e=>{
+    e.preventDefault();
+    const v=id=>$("#"+id).value.trim();
+    const P={name:v("g_name"),email:v("g_email"),phone:v("g_phone").replace(/\D/g,"").slice(-10),city:v("g_city"),linkedin:v("g_li"),
+      exp:parseFloat(v("g_exp")),notice:parseInt(v("g_notice"),10),cctc:parseFloat(v("g_cctc")),ectc:parseFloat(v("g_ectc")),
+      relocate:(document.querySelector('input[name=reloc]:checked')||{}).value};
+    const err=m=>{$("#gerr").textContent=m;};
+    if(P.name.length<2) return err("Please add your full name.");
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(P.email)) return err("That email doesn't look right.");
+    if(!/^[6-9]\d{9}$/.test(P.phone)) return err("Please enter a valid 10-digit mobile number.");
+    if(P.city.length<2) return err("Please add your current city.");
+    if([P.exp,P.notice,P.cctc,P.ectc].some(x=>isNaN(x)||x<0)) return err("Please fill experience, notice period and both CTC fields with numbers.");
+    if(P.cctc>200||P.ectc>200) return err("CTC is in lakhs per annum. For ₹9 lakh, enter 9.");
+    if(!P.relocate) return err("Please answer the Gurugram question.");
+    if(!cv) return err("Please attach your CV.");
+    if(!$("#g_ok").checked) return err("Please tick the consent box.");
+    S.profile=P; save();
+    // gates
+    let reason=null;
+    if(P.relocate==="No") reason="relocate";
+    else if(P.exp<1.5) reason="exp";
+    else if(P.ectc>11) reason="over";
+    else if(P.ectc<6) reason="under";
+    if(reason){ try{localStorage.setItem(BLOCK_KEY, reason)}catch(e){} post({action:"screened",reason,profile:P}).catch(()=>{}); return blocked(reason); }
+    const b=$("#gsub"); b.disabled=true; b.textContent="Saving your details…";
+    try{
+      const data=await new Promise((res,rej)=>{const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]); r.onerror=rej; r.readAsDataURL(cv);});
+      const j=await post({action:"start",profile:P,cv:{name:cv.name,type:cv.type,data}});
+      if(!j.ok||!j.id) throw new Error(j.error||"no id");
+      S.id=j.id; S.t0=Date.now(); save(); addXP(50); go("L1");
+    }catch(x){ b.disabled=false; b.textContent="Lock in and start Level 1"; err("We couldn't save that just now. Check your connection and try again."); }
+  };
+}
+
+const BLOCKS = {
+  relocate:["Gurugram or bust","This role is in our Gurugram office, 6 days a week, with the 2nd and 4th Saturdays off. If that changes for you, we'd love to see you back."],
+  exp:["Not yet, but soon","This role needs at least 1.5 years of full-time experience. Keep building. We hire through the year, so come back when you've crossed the line."],
+  over:["Plot twist: you're overqualified","Your expectations are above what this role pays, which says good things about you. We'd rather not waste your time with a role that undersells you."],
+  under:["You're aiming too low","This role sits a level above what you're asking for. Back yourself a little more, and keep an eye on our other openings."]
+};
+function blocked(r){
+  const [t,b]=BLOCKS[r]||BLOCKS.exp;
+  clearInterval(TIMER);
+  app.innerHTML=`<div class="stack fade" style="padding-top:24px">
+    <div class="big">Game over</div>
+    <h2>${t}</h2><p class="muted" style="max-width:56ch;font-size:17px">${b}</p>
+    <p class="small muted">Thanks for checking in with Nat Habit.</p></div>`;
+  $("#pips").innerHTML="";
+}
+
+function levelIntro(lv){
+  const n=LEVELS.indexOf(lv)+1;
+  app.innerHTML=`<div class="stack fade" style="padding-top:12px">
+    <div class="eyebrow">Level ${n} of 6 · ${lv.tests}</div>
+    <h1 style="font-size:clamp(38px,7.5vw,60px)">${lv.name}<span class="r">.</span></h1>
+    <div class="row"><span class="chip">${lv.time}</span></div>
+    <p style="font-size:17px;max-width:58ch">${lv.intro}</p>
+    <div><button class="btn" id="st">Start Level ${n}</button></div>
+  </div>`;
+  $("#st").onclick=()=>{S.levelLive=true; save(); ({L1:l1,L2:l2,L3:l3,L4:l4,L5:l5,L6:l6})[lv.id]();};
+}
+
+/* L1 Speed round */
+function l1(qi=0){
+  if(qi>=SPEED.length){addXP(100); return go("L2");}
+  const it=SPEED[qi];
+  app.innerHTML=`<div class="stack fade">
+    <div class="row" style="justify-content:space-between;align-items:center"><span class="eyebrow">Speed Round · Question ${qi+1} of ${SPEED.length}</span></div>
+    ${timerHTML}
+    <div class="card stack"><div class="q">${it.q}</div>
+    <div class="opts">${it.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="k">${"ABCD"[i]}</span>${o}</button>`).join("")}</div></div>
+  </div>`;
+  let done=false;
+  const pick=i=>{ if(done) return; done=true; clearInterval(TIMER); S.a.speed[qi]=i; save();
+    if(i>=0){app.querySelector(`.opt[data-i="${i}"]`).classList.add("sel"); addXP(20);} setTimeout(()=>l1(qi+1), i>=0?350:0); };
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
+  timer(45, ()=>pick(-1));
+}
+
+/* L2 Brain dump */
+function l2(){
+  app.innerHTML=`<div class="stack fade">
+    <span class="eyebrow">Brain Dump · Go wide</span>${timerHTML}
+    <div class="card stack"><div class="q">${DUMP_PROMPT}</div>
+      <textarea id="dump" rows="10" maxlength="4000" placeholder="One reason per line. Think customer, product, price, site, marketing, competition, operations, data…">${esc(S.a.dump)}</textarea>
+      <div class="row" style="justify-content:space-between;align-items:center"><span class="ideas" id="ic">0 ideas</span><button class="btn ghost" id="fin">I'm done</button></div>
+    </div></div>`;
+  const ta=$("#dump"), ic=$("#ic"); let last=lines(S.a.dump).length;
+  const upd=()=>{S.a.dump=ta.value; const n=lines(ta.value).length; ic.textContent=`${n} idea${n===1?"":"s"}`; if(n>last){addXP(10*(n-last));} last=Math.max(last,n); save();};
+  ta.oninput=upd; upd(); ta.focus();
+  const end=()=>{S.a.dump=ta.value; addXP(100); go("L3");};
+  $("#fin").onclick=end; timer(180,end);
+}
+
+/* L3 Triage */
+function l3(){
+  const mine=lines(S.a.dump);
+  app.innerHTML=`<div class="stack fade">
+    <span class="eyebrow">Triage · Structure</span>${timerHTML}
+    <div class="card stack">
+      <div class="q">Same mystery: website sales down 22%, Amazon flat. Your boss gives you time for just three checks before lunch. Which three, in what order? For each, what number would you pull to prove it or rule it out?</div>
+      <div><div class="small muted" style="margin-bottom:6px">Your list from Level 2 (${mine.length} idea${mine.length===1?"":"s"})</div><div class="mine">${mine.length?esc(mine.join("\n")):"You didn't list anything. Work from your head."}</div></div>
+      <textarea id="tri" rows="9" maxlength="3000" placeholder="1. … because … I'd look at …&#10;2. …&#10;3. …">${esc(S.a.triage)}</textarea>
+      <div class="row" style="justify-content:space-between;align-items:center"><span class="wc" id="wc"></span><button class="btn ghost" id="fin">Submit</button></div>
+    </div></div>`;
+  const ta=$("#tri"); wc(ta,$("#wc"),200); ta.addEventListener("input",()=>{S.a.triage=ta.value; save();});
+  const end=()=>{S.a.triage=ta.value; addXP(100); go("L4");};
+  $("#fin").onclick=end; timer(240,end);
+}
+function wc(ta,el,max){const u=()=>{const n=words(ta.value); el.textContent=`${n} / ${max} words`; el.classList.toggle("over",n>max)}; ta.addEventListener("input",u); u();}
+
+/* L4 Bets */
+function l4(){
+  app.innerHTML=`<div class="stack fade">
+    <span class="eyebrow">Pick Your Bets · Prioritising</span>${timerHTML}
+    <div class="card stack">
+      <div class="q">You own a ₹40 Cr body care category. The brief: grow 30% next year without letting gross margin drop below 60% (it's 64% now). Your team just pitched six ideas in one meeting. Rank them, best bet on top.</div>
+      <div class="bets" id="bets"></div>
+      <label class="f">Defend your #1 and roast your #6. What would make you change your #1?<textarea id="why" rows="6" maxlength="2500">${esc(S.a.betsWhy)}</textarea></label>
+      <div class="row" style="justify-content:space-between;align-items:center"><span class="wc" id="wc"></span><button class="btn ghost" id="fin">Submit</button></div>
+    </div></div>`;
+  const draw=()=>{
+    const o=S.a.bets;
+    $("#bets").innerHTML=o.map((k,i)=>{const b=BETS.find(x=>x.k===k); return `<div class="bet"><div class="rk">${i+1}</div><div class="tx"><b>${b.t}</b><span class="muted">${b.d}</span></div><div class="mvs"><button class="mv" data-i="${i}" data-d="-1" aria-label="Move up" ${i===0?"disabled":""}>▲</button><button class="mv" data-i="${i}" data-d="1" aria-label="Move down" ${i===o.length-1?"disabled":""}>▼</button></div></div>`}).join("");
+    $("#bets").querySelectorAll(".mv").forEach(m=>m.onclick=()=>{const i=+m.dataset.i,j=i+ +m.dataset.d; [o[i],o[j]]=[o[j],o[i]]; save(); draw(); const f=$(`#bets .mv[data-i="${j}"][data-d="${m.dataset.d}"]`)||$(`#bets .mv[data-i="${j}"]`); f&&f.focus();});
+  };
+  draw();
+  const ta=$("#why"); wc(ta,$("#wc"),150); ta.addEventListener("input",()=>{S.a.betsWhy=ta.value; save();});
+  const end=()=>{S.a.betsWhy=ta.value; addXP(100); go("L5");};
+  $("#fin").onclick=end; timer(300,end);
+}
+
+/* L5 Case */
+function l5(){
+  app.innerHTML=`<div class="stack fade">
+    <span class="eyebrow">The Channel Case · Depth</span>${timerHTML}
+    <div class="card stack">
+      <div class="q">Finance just handed you an extra ₹1 Cr for next quarter's marketing. Four channels are fighting for it. Margins and costs below are a % of each channel's own revenue.</div>
+      <div class="tbl"><table>
+        <thead><tr><th>Channel</th><th>Share of revenue</th><th>Growth (month on month)</th><th>Gross margin after discounts</th><th>Channel costs (commission, shipping, payment)</th><th>Marketing spend</th><th>90-day repeat</th></tr></thead>
+        <tbody>${CHANNELS.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody>
+      </table></div>
+      <label class="f">1. Do the maths: what does each channel actually keep after all these costs? What surprised you?<textarea id="c1" rows="4" maxlength="1500">${esc(S.a.caseMaths)}</textarea><span class="wc" id="w1"></span></label>
+      <label class="f">2. Split the ₹1 Cr. Who gets what, and why?<textarea id="c2" rows="6" maxlength="2500">${esc(S.a.caseSplit)}</textarea><span class="wc" id="w2"></span></label>
+      <label class="f">3. What's one thing you don't know that could flip your call?<textarea id="c3" rows="4" maxlength="1500">${esc(S.a.caseMissing)}</textarea><span class="wc" id="w3"></span></label>
+      <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div>
+    </div></div>`;
+  const map={c1:"caseMaths",c2:"caseSplit",c3:"caseMissing"};
+  [["c1","w1",80],["c2","w2",150],["c3","w3",80]].forEach(([t,w,m])=>{const ta=$("#"+t); wc(ta,$("#"+w),m); ta.addEventListener("input",()=>{S.a[map[t]]=ta.value; save();});});
+  const end=()=>{Object.keys(map).forEach(t=>S.a[map[t]]=$("#"+t).value); addXP(150); go("L6");};
+  $("#fin").onclick=end; timer(600,end);
+}
+
+/* L6 Gut */
+function l6(qi=0){
+  if(qi>=GUT.length){addXP(100); return finish();}
+  const g=GUT[qi]; let choice=null;
+  app.innerHTML=`<div class="stack fade">
+    <span class="eyebrow">Gut Check · Call ${qi+1} of ${GUT.length}</span>${timerHTML}
+    <div class="card stack"><div class="q">${g.q}</div>
+      <div class="opts">${g.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[i]}</span>${o}</button>`).join("")}</div>
+      <label class="f">One-line reason<input id="gr" type="text" maxlength="140" placeholder="Because…"></label>
+      <div class="row" style="justify-content:flex-end"><button class="btn" id="nx" disabled>Lock it in</button></div>
+    </div></div>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{app.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); choice=+b.dataset.i; $("#nx").disabled=false; $("#gr").focus();});
+  let done=false;
+  const end=()=>{ if(done) return; done=true; clearInterval(TIMER); S.a.gut[qi]=`${qi+1}) ${choice==null?"No pick":g.o[choice]}: ${$("#gr").value.trim()||"(no reason)"}`; save(); if(choice!=null) addXP(20); l6(qi+1); };
+  $("#nx").onclick=end; $("#gr").addEventListener("keydown",e=>{if(e.key==="Enter"&&choice!=null) end();});
+  timer(30,end);
+}
+
+/* Finish */
+async function finish(){
+  S.step="done"; S.levelLive=false; save(); render();
+}
+function payload(){
+  const a=S.a;
+  return {action:"finish", id:S.id, answers:{
+    speed:SPEED.map((_,i)=>a.speed[i]??-1), dumpCount:lines(a.dump).length, dump:a.dump, triage:a.triage,
+    betsOrder:a.bets.map((k,i)=>`${i+1}. ${k}: ${BETS.find(b=>b.k===k).t}`).join("\n"), betsWhy:a.betsWhy,
+    caseMaths:a.caseMaths, caseSplit:a.caseSplit, caseMissing:a.caseMissing, gut:a.gut.join("\n"),
+    minutes:S.t0?Math.round((Date.now()-S.t0)/60000):0, tabSwitches:S.tabs, pastes:S.pastes, reloads:S.reloads, keysVsChars:`${S.keys||0} keys / ${[a.dump,a.triage,a.betsWhy,a.caseMaths,a.caseSplit,a.caseMissing,a.gut.join("")].join("").replace(/\s/g,"").length} chars`}};
+}
+function done(){
+  const ideas=lines(S.a.dump).length, mins=S.t0?Math.round((Date.now()-S.t0)/60000):0;
+  app.innerHTML=`<div class="stack fade" style="padding-top:12px">
+    <div class="eyebrow">Run complete</div>
+    <div class="big">${S.xp} XP</div>
+    <h2>Nice run, <span class="r">${esc((S.profile.name||"").split(" ")[0]||"friend")}</span>.</h2>
+    <div class="stats"><div class="stat"><b>6/6</b><span>levels cleared</span></div><div class="stat"><b>${ideas}</b><span>ideas in the brain dump</span></div><div class="stat"><b>${mins}m</b><span>on the clock</span></div></div>
+    <div class="card" id="sv"><p style="margin:0" class="muted" id="svt">Saving your answers…</p></div>
+    <div class="card stack small"><h3>What happens next</h3><p class="muted" style="margin:0">A person on the category team reads every run. If yours stands out, we'll call you for a conversation about how you think, using your answers here as the starting point.</p></div>
+    <div class="row"><button class="btn ghost" id="share">Copy link for a friend</button></div>
+  </div>`;
+  $("#share").onclick=async()=>{const u=location.href.split("#")[0]; try{await navigator.clipboard.writeText(u); $("#share").textContent="Link copied";}catch(e){$("#share").textContent=u;}};
+  if(S.sent){ $("#svt").textContent="Your answers are in. Thanks for playing."; return; }
+  const trySend=async()=>{
+    $("#svt").textContent="Saving your answers…";
+    try{const j=await post(payload()); if(!j.ok) throw 0; S.sent=true; save(); $("#svt").textContent="Your answers are in. Thanks for playing.";}
+    catch(e){ $("#sv").innerHTML=`<p class="muted" style="margin:0 0 10px">We couldn't save your answers yet. They're kept on this device, so nothing is lost.</p><button class="btn" id="rt">Try again</button>`; $("#rt").onclick=()=>{ $("#sv").innerHTML='<p style="margin:0" class="muted" id="svt"></p>'; trySend(); }; }
+  };
+  trySend();
+}
+
+/* ======= BOOT ======= */
+(function boot(){
+  let blockedR=null; try{blockedR=localStorage.getItem(BLOCK_KEY)}catch(e){}
+  if(blockedR && !S.id){ hud(); return blocked(blockedR); }
+  if(S.levelLive){ S.reloads++; S.levelLive=false; save(); }
+  render();
+})();
+</script>
+</body>
+</html>
