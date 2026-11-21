@@ -287,7 +287,7 @@ function intro(){
     <div class="card stack">
       <div><div class="eyebrow">The role</div><h2 style="margin-bottom:4px">Sr Category <span class="r">Growth</span> Associate</h2><p class="muted small" style="margin:0">Nat Habit · Own a category's growth end to end: consumer, product, pricing, channels and P&L.</p></div>
       <div class="row">
-        <span class="chip">Gurugram</span><span class="chip">6 days in office · 2nd &amp; 4th Saturdays off</span><span class="chip">1.5+ years experience</span><span class="chip">Joining within 15 days preferred</span>
+        <span class="chip">Gurugram</span><span class="chip">6 days in office · 2nd &amp; 4th Saturdays off</span><span class="chip">1+ year of experience</span><span class="chip">Joining within 15 days preferred</span>
       </div>
     </div>
     <div class="levels">${LEVELS.map((l,i)=>`<div class="lv"><span class="n">LEVEL ${i+1}</span><b>${l.name}</b><span class="t">${l.time} · ${l.tests}</span></div>`).join("")}</div>
@@ -321,6 +321,7 @@ function gate(){
         <label class="f">Current CTC (LPA)<span class="hint">Fixed + variable, in lakhs a year</span><input id="g_cctc" type="number" step="0.1" min="0" inputmode="decimal" required value="${esc(p.cctc??"")}"></label>
         <label class="f">Expected CTC (LPA)<span class="hint">In lakhs a year</span><input id="g_ectc" type="number" step="0.1" min="0" inputmode="decimal" required value="${esc(p.ectc??"")}"></label>
       </div>
+      <div class="flag" id="eflag" hidden>We prefer 1.5+ years of experience, but you're welcome to continue.</div>
       <div class="flag" id="nflag" hidden>Heads up: we're after early starters who can join within 15 days. You can carry on, but shorter notice helps.</div>
       <div class="f" style="display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px">Happy to relocate to Gurugram and work 6 days from office (2nd &amp; 4th Saturdays off)?
         <div class="seg" role="radiogroup"><label><input type="radio" name="reloc" value="Yes" ${p.relocate==="Yes"?"checked":""}> Yes</label><label><input type="radio" name="reloc" value="No" ${p.relocate==="No"?"checked":""}> No</label></div>
@@ -335,6 +336,7 @@ function gate(){
   </form>`;
   const nIn=$("#g_notice"), flag=$("#nflag");
   const nchk=()=>{flag.hidden=!(Number(nIn.value)>15)}; nIn.oninput=nchk; nchk();
+  const eIn=$("#g_exp"), eflag=$("#eflag"); const echk=()=>{const v=parseFloat(eIn.value); eflag.hidden=!(v>=1&&v<1.5)}; eIn.oninput=echk; echk();
   let cv=null;
   $("#g_cv").onchange=e=>{
     const f=e.target.files[0]; if(!f) return;
@@ -360,25 +362,53 @@ function gate(){
     S.profile=P; save();
     // gates
     let reason=null;
-    if(P.relocate==="No") reason="relocate";
-    else if(P.exp<1.5) reason="exp";
-    else if(P.ectc>11) reason="over";
+    if(P.exp<1) reason="exp";
     else if(P.ectc<6) reason="under";
     if(reason){ try{localStorage.setItem(BLOCK_KEY, reason)}catch(e){} post({action:"screened",reason,profile:P}).catch(()=>{}); return blocked(reason); }
-    const b=$("#gsub"); b.disabled=true; b.textContent="Saving your details…";
-    try{
-      const data=await new Promise((res,rej)=>{const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]); r.onerror=rej; r.readAsDataURL(cv);});
-      const j=await post({action:"start",profile:P,cv:{name:cv.name,type:cv.type,data}});
-      if(!j.ok||!j.id) throw new Error(j.error||"no id");
-      S.id=j.id; S.t0=Date.now(); save(); addXP(50); go("L1");
-    }catch(x){ b.disabled=false; b.textContent="Lock in and start Level 1"; err("We couldn't save that just now. Check your connection and try again."); }
+    P.notes=[]; if(P.exp<1.5) P.notes.push(`Experience ${P.exp} yrs (prefer 1.5+)`);
+    const checks=[];
+    if(P.relocate==="No") checks.push(["Based in Delhi NCR","This role needs you in Delhi NCR, working from our Gurugram office 6 days a week (2nd and 4th Saturdays off)."]);
+    if(P.ectc>11) checks.push(["Budget of about ₹10 LPA",`You've mentioned an expected CTC of ₹${esc(P.ectc)} LPA. The budget for this role is around ₹10 LPA.`]);
+    if(checks.length && !P.checksOk) return confirmChecks(P, cv, checks);
+    P.budgetNote=P.notes.join("; ");
+    startRun(P, cv, $("#gsub"), err);
   };
 }
 
+async function startRun(P, cv, b, err){
+  const label=b.textContent; b.disabled=true; b.textContent="Saving your details…";
+  try{
+    const data=await new Promise((res,rej)=>{const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]); r.onerror=rej; r.readAsDataURL(cv);});
+    const j=await post({action:"start",profile:P,cv:{name:cv.name,type:cv.type,data}});
+    if(!j.ok||!j.id) throw new Error(j.error||"no id");
+    S.id=j.id; S.t0=Date.now(); save(); addXP(50); go("L1");
+  }catch(x){ b.disabled=false; b.textContent=label; err("We couldn't save that just now. Check your connection and try again."); }
+}
+
+function confirmChecks(P, cv, checks){
+  app.innerHTML=`<div class="stack fade" style="padding-top:20px">
+    <div class="eyebrow">A quick check before you start</div>
+    <h2>Just making sure this works for you</h2>
+    ${checks.map(([t,d])=>`<div class="card"><h3>${t}</h3><p class="muted" style="margin:0">${d}</p></div>`).join("")}
+    <p class="muted" style="max-width:56ch">If this works for you, you're welcome to carry on. If not, no worries at all.</p>
+    <div class="err" id="berr" role="alert"></div>
+    <div class="row"><button class="btn" id="bok">Yes, this works for me</button><button class="btn ghost" id="bno">Not for me</button></div>
+  </div>`;
+  window.scrollTo({top:0});
+  $("#bok").onclick=()=>{
+    P.checksOk=true;
+    if(P.relocate==="No") P.notes.push("Said No to Gurugram, then agreed to Delhi NCR office");
+    if(P.ectc>11) P.notes.push(`Expected ${P.ectc} LPA, OK to continue at about 10 LPA`);
+    P.budgetNote=P.notes.join("; "); S.profile=P; save();
+    startRun(P,cv,$("#bok"),m=>{$("#berr").textContent=m;});
+  };
+  $("#bno").onclick=()=>{ const r=P.relocate==="No"?"relocate":"over"; try{localStorage.setItem(BLOCK_KEY,r)}catch(e){} post({action:"screened",reason:r+" (declined at check)",profile:P}).catch(()=>{}); blocked(r); };
+}
+
 const BLOCKS = {
-  relocate:["This role needs you in Gurugram","It's based in our Gurugram office, 6 days a week, with the 2nd and 4th Saturdays off. If that works for you later, we'd love to hear from you."],
-  exp:["It's a little early for this role","This role needs at least 1.5 years of full-time experience. We hire through the year, so please come back when you're there."],
-  over:["You may be a step ahead of this role","Your expectations are above what this role offers, which speaks well of you. We'd be glad to stay in touch for future roles."],
+  relocate:["Thanks for letting us know","This role needs you in Delhi NCR, working from our Gurugram office 6 days a week. If that changes for you, we'd love to hear from you."],
+  exp:["It's a little early for this role","This role needs at least 1 year of full-time experience. We hire through the year, so please come back when you're there."],
+  over:["Thanks for letting us know","This role's budget is around ₹10 LPA, so it may not be the right match right now. We'd be glad to stay in touch for future roles."],
   under:["This role is a step up from your ask","It sits a level above the salary you've mentioned. Back yourself, and keep an eye on our other openings."]
 };
 function blocked(r){
