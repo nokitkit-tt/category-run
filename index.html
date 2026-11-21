@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>The Category Run · Nat Habit</title>
-<meta name="description" content="Nat Habit is hiring a Sr Category Growth Associate in Gurugram. Six timed levels, about 30 minutes. Apply by playing.">
+<meta name="description" content="Nat Habit is hiring a Sr Category Growth Associate in Gurugram. Seven short timed levels, about 25 minutes. Apply by playing.">
 <meta property="og:title" content="The Category Run · Nat Habit is hiring">
-<meta property="og:description" content="Six timed levels. About 30 minutes. Can you think like someone who runs a D2C category?">
+<meta property="og:description" content="Seven short timed levels. About 25 minutes. Can you think like someone who runs a D2C category?">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
@@ -137,6 +137,8 @@ tr:last-child td{border-bottom:0}
 .stat span{font-size:13px;color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--warn);color:#fff;font:600 14px/1.3 var(--body);padding:12px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;max-width:calc(100% - 32px);text-align:center;z-index:20}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+.breath{width:56px;height:56px;border-radius:50%;background:var(--accent-soft);border:2px solid var(--accent);animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.25);opacity:.75}}
 .foot{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center}
 .fade{animation:in .35s ease-out}
 @keyframes in{from{opacity:.0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -147,7 +149,7 @@ tr:last-child td{border-bottom:0}
 <div class="hud"><div class="hud-in">
   <div class="brand">The Category <span class="r">Run.</span><small>Nat Habit is hiring</small></div>
   <div class="pips" id="pips" aria-hidden="true"></div>
-  <div class="xp" id="xp" aria-live="polite">0 <span>XP</span></div>
+  <div class="xp" id="xp"></div>
 </div></div>
 
 <main class="wrap" id="app"></main>
@@ -160,24 +162,23 @@ const KEY = "ncr_run_v1", BLOCK_KEY = "ncr_block_v1";
 
 /* ======= CONTENT ======= */
 const LEVELS = [
-  {id:"L1", name:"Speed Round", time:"6 × 60 sec", tests:"Quick maths", intro:"Six money questions, 60 seconds each. Tap an answer and it's locked. Calculator allowed, GST ignored, panic optional."},
-  {id:"L2", name:"Brain Dump", time:"3 min", tests:"Going wide", intro:"One mystery, three minutes. Write every reason you can think of, one per line. Wild ones count too. Every idea earns XP."},
-  {id:"L3", name:"Triage", time:"4 min", tests:"Structure", intro:"Your Level 2 list comes back. You only get time for three checks. Which ones, in what order, and what number would you pull for each?"},
-  {id:"L4", name:"Pick Your Bets", time:"5 min", tests:"Prioritising", intro:"Six ideas from one very excited team meeting. Rank them from best bet to worst, then defend your top pick and roast your bottom one."},
-  {id:"L5", name:"The Channel Case", time:"10 min", tests:"Depth", intro:"Four channels, one ₹1 Cr pot, and everyone wants a slice. Read the numbers, make the call, and tell us what could prove you wrong."},
-  {id:"L6", name:"Gut Check", time:"3 × 30 sec", tests:"Judgement", intro:"Three quick calls, 30 seconds each. Pick a side and give a one-line reason. No sitting on the fence."}
+  {id:"L1", name:"Speed Round", time:"4 × 60 sec", tests:"Quick maths", intro:"Four quick money questions, 60 seconds each. Tap an answer to lock it in. A calculator is welcome, and you can ignore GST."},
+  {id:"L2", name:"Brain Dump", time:"3 min", tests:"Going wide", intro:"One situation, three minutes. Write every reason you can think of, one per line. Every idea counts."},
+  {id:"L3", name:"Triage", time:"4 min", tests:"Structure", intro:"Your Level 2 list comes back. Pick the three things you would check first, in order, and the number you would look at for each."},
+  {id:"L4", name:"Pick Your Bets", time:"5 min", tests:"Prioritising", intro:"Six ideas from your team. Rank them from best bet to worst, then explain your top and bottom picks."},
+  {id:"L5", name:"The Channel Case", time:"10 min", tests:"Depth", intro:"Four channels and ₹1 Cr to invest. Read the numbers, make the call, and tell us what could change your mind."},
+  {id:"L6", name:"Name It", time:"2 min", tests:"Creative judgement", intro:"A finished product without a name. Give it one, write the line for the pack, and choose where it launches. Enjoy this one."},
+  {id:"L7", name:"Gut Check", time:"3 × 30 sec", tests:"Judgement", intro:"Three quick calls, 30 seconds each. Pick a side and add a short reason."}
 ];
 
 const SPEED = [
-  {q:"Sale season. Your serum's MRP is ₹500, it's running at 20% off, and it costs ₹100 to make. What's your gross margin on what the customer actually paid?", o:["80%","75%","70%","60%"]},
+  {q:"During a sale, your serum's MRP is ₹500, it's running at 20% off, and it costs ₹100 to make. What's your gross margin on what the customer actually paid?", o:["80%","75%","70%","60%"]},
   {q:"50,000 people land on your website today. 2% of them buy, and each spends ₹600. How much money came in?", o:["₹60 lakh","₹1.2 lakh","₹6 lakh","₹3 lakh"]},
   {q:"You spent ₹600 to win Priya as a customer. She orders 3 times this year at ₹500 an order, and you keep 70% of each order after product cost. What's she worth to you after taking off that ₹600?", o:["₹1,050","₹450","₹900","−₹100"]},
-  {q:"Your Amazon ads: ₹2 lakh spent at a ROAS of 4. You keep 60% of revenue after product cost, and Amazon takes 25% of revenue for commission and shipping. What's left in your pocket?", o:["₹4.8 lakh","₹2.8 lakh","₹0.8 lakh","−₹1.2 lakh"]},
-  {q:"Your ₹300 shampoo costs ₹90 to make. You raise the price 10% and lose 8% of buyers. What happens to your gross profit in rupees?", o:["Falls about 8%","Roughly flat","Rises about 1%","Rises about 5%"]},
-  {q:"1,000 new customers in January. 30% come back by March, and 40% of those come back again by June. How many are on their 3rd order or more?", o:["120","400","70","300"]}
+  {q:"Your ₹300 shampoo costs ₹90 to make. You raise the price 10% and lose 8% of buyers. What happens to your gross profit in rupees?", o:["Falls about 8%","Roughly flat","Rises about 1%","Rises about 5%"]}
 ];
 
-const DUMP_PROMPT = "Uh-oh. Your bestselling face wash sold 22% less on your own website this month. The same product on Amazon? Totally flat. What could be going on? Throw every possible reason at the wall.";
+const DUMP_PROMPT = "Your bestselling face wash sold 22% less on your own website this month. On Amazon, the same product is flat. What could be going on? List every reason you can think of.";
 
 const BETS = [
   {k:"A", t:"Two new fragrance variants of the hero body lotion", d:"Estimated +₹3 Cr a year. Four months to launch. About 25% of their sales would come from the existing variant."},
@@ -203,8 +204,8 @@ const GUT = [
 ];
 
 /* ======= STATE ======= */
-const STEPS = ["intro","gate","L1","L2","L3","L4","L5","L6","done"];
-function fresh(){return {step:"intro", id:null, profile:{}, a:{speed:[],dump:"",triage:"",bets:BETS.map(b=>b.k),betsWhy:"",caseMaths:"",caseSplit:"",caseMissing:"",gut:[]}, xp:0, t0:null, tabs:0, pastes:0, reloads:0, sent:false, levelLive:false};}
+const STEPS = ["intro","gate","L1","L2","L3","L4","L5","L6","L7","done"];
+function fresh(){return {step:"intro", id:null, profile:{}, a:{speed:[],dump:"",triage:"",bets:BETS.map(b=>b.k),betsWhy:"",caseMaths:"",caseSplit:"",caseMissing:"",gut:[], nameIt:{name:"",line:"",where:""}}, xp:0, t0:null, tabs:0, pastes:0, reloads:0, sent:false, levelLive:false};}
 let S = load() || fresh();
 function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
 function save(){try{localStorage.setItem(KEY, JSON.stringify(S))}catch(e){}}
@@ -219,9 +220,9 @@ function lines(s){return s.split(/\n+/).map(x=>x.trim()).filter(Boolean)}
 function hud(){
   const i = STEPS.indexOf(S.step);
   $("#pips").innerHTML = LEVELS.map((l,k)=>{const idx=k+2; return `<span class="pip ${i>idx?"done":i===idx?"now":""}"></span>`}).join("");
-  $("#xp").innerHTML = `${S.xp} <span>XP</span>`;
+  $("#xp").textContent = (i>=2&&i<=LEVELS.length+1) ? `${i-1} of ${LEVELS.length}` : "";
 }
-function addXP(n){S.xp+=n; save(); hud(); const p=document.createElement("div"); p.className="pop"; p.textContent=`+${n}`; document.body.appendChild(p); setTimeout(()=>p.remove(),950);}
+function addXP(n){S.xp+=n; save();}
 
 function go(step){clearInterval(TIMER); S.step=step; S.levelLive=false; save(); render(); window.scrollTo({top:0});}
 
@@ -230,7 +231,7 @@ document.addEventListener("visibilitychange",()=>{ if(document.hidden && S.level
 function noPaste(e){
   if(!S.levelLive) return;
   const t=e.target; if(!t || !/^(TEXTAREA|INPUT)$/.test(t.tagName)) return;
-  e.preventDefault(); S.pastes++; save(); toast("Pasting is off here. Type it out, in your own words.");
+  e.preventDefault(); S.pastes++; save(); toast("Pasting is turned off here. Please type your answer.");
 }
 document.addEventListener("paste",noPaste,true);
 document.addEventListener("drop",noPaste,true);
@@ -281,7 +282,7 @@ function intro(){
   app.innerHTML = `<div class="stack fade">
     <div><div class="eyebrow">Now hiring · Gurugram</div>
     <h1>The Category <span class="r">Run.</span></h1>
-    <p class="muted" style="font-size:18px;max-width:58ch">Six levels. About 30 minutes. One question: can you think like someone who runs a category at a D2C beauty and personal care brand?</p></div>
+    <p class="muted" style="font-size:18px;max-width:58ch">Seven short levels, about 25 minutes. A relaxed look at how you think about running a category at a D2C beauty and personal care brand.</p></div>
     <div class="counter" id="cnt" hidden><span class="dot"></span><span><b id="cntn"></b> people have taken the run</span></div>
     <div class="card stack">
       <div><div class="eyebrow">The role</div><h2 style="margin-bottom:4px">Sr Category <span class="r">Growth</span> Associate</h2><p class="muted small" style="margin:0">Nat Habit · Own a category's growth end to end: consumer, product, pricing, channels and P&L.</p></div>
@@ -291,10 +292,10 @@ function intro(){
     </div>
     <div class="levels">${LEVELS.map((l,i)=>`<div class="lv"><span class="n">LEVEL ${i+1}</span><b>${l.name}</b><span class="t">${l.time} · ${l.tests}</span></div>`).join("")}</div>
     <div class="card small">
-      <h3>House rules</h3>
-      <p style="margin:0" class="muted">Timers are real and there's no going back once a level ends. A calculator is fine. Pasting is switched off in the answer boxes, so type it like you mean it. We note tab switches and read every answer ourselves. A laptop works best.</p>
+      <h3>Before you start</h3>
+      <p style="margin:0" class="muted">Each level has a gentle timer, and a level can't be reopened once it ends. A calculator is welcome. Please type your answers in your own words; pasting is turned off. Find a quiet 25 minutes, ideally on a laptop. A person on our team reads every answer.</p>
     </div>
-    <div><button class="btn" id="go">Start: tell us about you</button></div>
+    <div><button class="btn" id="go">Begin</button></div>
   </div>`;
   $("#go").onclick=()=>go("gate");
   getCount().then(n=>{ if(n!=null && n>=SHOW_COUNT_FROM){ $("#cntn").textContent=n.toLocaleString("en-IN"); $("#cnt").hidden=false; } });
@@ -375,31 +376,32 @@ function gate(){
 }
 
 const BLOCKS = {
-  relocate:["Gurugram or bust","This role is in our Gurugram office, 6 days a week, with the 2nd and 4th Saturdays off. If that changes for you, we'd love to see you back."],
-  exp:["Not yet, but soon","This role needs at least 1.5 years of full-time experience. Keep building. We hire through the year, so come back when you've crossed the line."],
-  over:["Plot twist: you're overqualified","Your expectations are above what this role pays, which says good things about you. We'd rather not waste your time with a role that undersells you."],
-  under:["You're aiming too low","This role sits a level above what you're asking for. Back yourself a little more, and keep an eye on our other openings."]
+  relocate:["This role needs you in Gurugram","It's based in our Gurugram office, 6 days a week, with the 2nd and 4th Saturdays off. If that works for you later, we'd love to hear from you."],
+  exp:["It's a little early for this role","This role needs at least 1.5 years of full-time experience. We hire through the year, so please come back when you're there."],
+  over:["You may be a step ahead of this role","Your expectations are above what this role offers, which speaks well of you. We'd be glad to stay in touch for future roles."],
+  under:["This role is a step up from your ask","It sits a level above the salary you've mentioned. Back yourself, and keep an eye on our other openings."]
 };
 function blocked(r){
   const [t,b]=BLOCKS[r]||BLOCKS.exp;
   clearInterval(TIMER);
-  app.innerHTML=`<div class="stack fade" style="padding-top:24px">
-    <div class="big">Game over</div>
+  app.innerHTML=`<div class="stack fade" style="padding-top:32px;align-items:flex-start">
+    <div class="breath" aria-hidden="true"></div>
+    <div class="eyebrow">Take a breath</div>
     <h2>${t}</h2><p class="muted" style="max-width:56ch;font-size:17px">${b}</p>
-    <p class="small muted">Thanks for checking in with Nat Habit.</p></div>`;
-  $("#pips").innerHTML="";
+    <p class="small muted">Thank you for your time and your interest in Nat Habit.</p></div>`;
+  $("#pips").innerHTML=""; $("#xp").textContent="";
 }
 
 function levelIntro(lv){
   const n=LEVELS.indexOf(lv)+1;
   app.innerHTML=`<div class="stack fade" style="padding-top:12px">
-    <div class="eyebrow">Level ${n} of 6 · ${lv.tests}</div>
+    <div class="eyebrow">Level ${n} of ${LEVELS.length} · ${lv.tests}</div>
     <h1 style="font-size:clamp(38px,7.5vw,60px)">${lv.name}<span class="r">.</span></h1>
     <div class="row"><span class="chip">${lv.time}</span></div>
     <p style="font-size:17px;max-width:58ch">${lv.intro}</p>
     <div><button class="btn" id="st">Start Level ${n}</button></div>
   </div>`;
-  $("#st").onclick=()=>{S.levelLive=true; save(); ({L1:l1,L2:l2,L3:l3,L4:l4,L5:l5,L6:l6})[lv.id]();};
+  $("#st").onclick=()=>{S.levelLive=true; save(); ({L1:l1,L2:l2,L3:l3,L4:l4,L5:l5,L6:lName,L7:l6})[lv.id]();};
 }
 
 /* L1 Speed round */
@@ -440,7 +442,7 @@ function l3(){
   app.innerHTML=`<div class="stack fade">
     <span class="eyebrow">Triage · Structure</span>${timerHTML}
     <div class="card stack">
-      <div class="q">Same mystery: website sales down 22%, Amazon flat. Your boss gives you time for just three checks before lunch. Which three, in what order? For each, what number would you pull to prove it or rule it out?</div>
+      <div class="q">Same situation: website sales down 22%, Amazon flat. You have time for three checks. Which three, in what order? For each, what number would confirm it or rule it out?</div>
       <div><div class="small muted" style="margin-bottom:6px">Your list from Level 2 (${mine.length} idea${mine.length===1?"":"s"})</div><div class="mine">${mine.length?esc(mine.join("\n")):"You didn't list anything. Work from your head."}</div></div>
       <textarea id="tri" rows="9" maxlength="3000" placeholder="1. … because … I'd look at …&#10;2. …&#10;3. …">${esc(S.a.triage)}</textarea>
       <div class="row" style="justify-content:space-between;align-items:center"><span class="wc" id="wc"></span><button class="btn ghost" id="fin">Submit</button></div>
@@ -456,9 +458,9 @@ function l4(){
   app.innerHTML=`<div class="stack fade">
     <span class="eyebrow">Pick Your Bets · Prioritising</span>${timerHTML}
     <div class="card stack">
-      <div class="q">You own a ₹40 Cr body care category. The brief: grow 30% next year without letting gross margin drop below 60% (it's 64% now). Your team just pitched six ideas in one meeting. Rank them, best bet on top.</div>
+      <div class="q">You run a ₹40 Cr body care category. The goal: grow 30% next year while keeping gross margin at 60% or above (it's 64% today). Your team has suggested six ideas. Rank them, best bet on top.</div>
       <div class="bets" id="bets"></div>
-      <label class="f">Defend your #1 and roast your #6. What would make you change your #1?<textarea id="why" rows="6" maxlength="2500">${esc(S.a.betsWhy)}</textarea></label>
+      <label class="f">Why is your #1 on top and your #6 at the bottom? What would make you change your #1?<textarea id="why" rows="6" maxlength="2500">${esc(S.a.betsWhy)}</textarea></label>
       <div class="row" style="justify-content:space-between;align-items:center"><span class="wc" id="wc"></span><button class="btn ghost" id="fin">Submit</button></div>
     </div></div>`;
   const draw=()=>{
@@ -477,7 +479,7 @@ function l5(){
   app.innerHTML=`<div class="stack fade">
     <span class="eyebrow">The Channel Case · Depth</span>${timerHTML}
     <div class="card stack">
-      <div class="q">Finance just handed you an extra ₹1 Cr for next quarter's marketing. Four channels want it. <b>Kept per ₹100 sold</b> is the profit left after product cost, discounts, channel fees and marketing.</div>
+      <div class="q">You have an extra ₹1 Cr for next quarter's marketing, and four channels to choose from. <b>Kept per ₹100 sold</b> is the profit left after product cost, discounts, channel fees and marketing.</div>
       <div class="tbl"><table>
         <thead><tr><th>Channel</th><th>Share of sales</th><th>Growth per month</th><th>Kept per ₹100 sold</th><th>Customers who reorder in 90 days</th><th>We get customer data?</th></tr></thead>
         <tbody>${CHANNELS.map(r=>`<tr>${r.map((c,i)=>`<td data-l="${CH_HEAD[i]}">${c}</td>`).join("")}</tr>`).join("")}</tbody>
@@ -493,7 +495,26 @@ function l5(){
   $("#fin").onclick=end; timer(600,end);
 }
 
-/* L6 Gut */
+/* L6 Name It */
+function lName(){
+  const n=S.a.nameIt||(S.a.nameIt={name:"",line:"",where:""});
+  app.innerHTML=`<div class="stack fade">
+    <span class="eyebrow">Name It · Creative judgement</span>${timerHTML}
+    <div class="card stack">
+      <div class="q">Your team has made a cooling foot cream with mint and neem for people who are on their feet all day, like nurses, salon staff and shop-floor teams. It needs a name and a reason to buy.</div>
+      <label class="f">Product name<input id="n1" type="text" maxlength="40" autocomplete="off" value="${esc(n.name)}"></label>
+      <label class="f">The one line on the front of the pack<input id="n2" type="text" maxlength="90" autocomplete="off" value="${esc(n.line)}"></label>
+      <label class="f">Where does it launch first, and why there?<textarea id="n3" rows="4" maxlength="800">${esc(n.where)}</textarea><span class="wc" id="w4"></span></label>
+      <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div>
+    </div></div>`;
+  wc($("#n3"),$("#w4"),60);
+  const sync=()=>{n.name=$("#n1").value; n.line=$("#n2").value; n.where=$("#n3").value; save();};
+  ["n1","n2","n3"].forEach(id=>$("#"+id).addEventListener("input",sync));
+  const end=()=>{sync(); addXP(100); go("L7");};
+  $("#fin").onclick=end; timer(120,end);
+}
+
+/* L7 Gut */
 function l6(qi=0){
   if(qi>=GUT.length){addXP(100); return finish();}
   const g=GUT[qi]; let choice=null;
@@ -520,25 +541,24 @@ function payload(){
   return {action:"finish", id:S.id, answers:{
     speed:SPEED.map((_,i)=>a.speed[i]??-1), dumpCount:lines(a.dump).length, dump:a.dump, triage:a.triage,
     betsOrder:a.bets.map((k,i)=>`${i+1}. ${k}: ${BETS.find(b=>b.k===k).t}`).join("\n"), betsWhy:a.betsWhy,
-    caseMaths:a.caseMaths, caseSplit:a.caseSplit, caseMissing:a.caseMissing, gut:a.gut.join("\n"),
+    caseMaths:a.caseMaths, caseSplit:a.caseSplit, caseMissing:a.caseMissing, gut:a.gut.join("\n"), nameIt:`Name: ${(a.nameIt||{}).name||""}\nFront line: ${(a.nameIt||{}).line||""}\nLaunch: ${(a.nameIt||{}).where||""}`,
     minutes:S.t0?Math.round((Date.now()-S.t0)/60000):0, tabSwitches:S.tabs, pastes:S.pastes, reloads:S.reloads, keysVsChars:`${S.keys||0} keys / ${[a.dump,a.triage,a.betsWhy,a.caseMaths,a.caseSplit,a.caseMissing,a.gut.join("")].join("").replace(/\s/g,"").length} chars`}};
 }
 function done(){
   const ideas=lines(S.a.dump).length, mins=S.t0?Math.round((Date.now()-S.t0)/60000):0;
   app.innerHTML=`<div class="stack fade" style="padding-top:12px">
-    <div class="eyebrow">Run complete</div>
-    <div class="big">${S.xp} XP</div>
-    <h2>Nice run, <span class="r">${esc((S.profile.name||"").split(" ")[0]||"friend")}</span>.</h2>
-    <div class="stats"><div class="stat"><b>6/6</b><span>levels cleared</span></div><div class="stat"><b>${ideas}</b><span>ideas in the brain dump</span></div><div class="stat"><b>${mins}m</b><span>on the clock</span></div></div>
+    <div class="eyebrow">All done</div>
+    <h2 style="font-size:clamp(30px,6vw,44px)">Thank you, <span class="r">${esc((S.profile.name||"").split(" ")[0]||"friend")}</span>.</h2>
+    <div class="stats"><div class="stat"><b>${LEVELS.length}/${LEVELS.length}</b><span>levels done</span></div><div class="stat"><b>${ideas}</b><span>ideas in the brain dump</span></div><div class="stat"><b>${mins}m</b><span>time taken</span></div></div>
     <div class="card" id="sv"><p style="margin:0" class="muted" id="svt">Saving your answers…</p></div>
-    <div class="card stack small"><h3>What happens next</h3><p class="muted" style="margin:0">A person on the category team reads every run. If yours stands out, we'll call you for a conversation about how you think, using your answers here as the starting point.</p></div>
+    <div class="card stack small"><h3>What happens next</h3><p class="muted" style="margin:0">A person on the category team reads every application. If yours stands out, we'll call you for a conversation about how you think, using your answers here as the starting point.</p></div>
     <div class="row"><button class="btn ghost" id="share">Copy link for a friend</button></div>
   </div>`;
   $("#share").onclick=async()=>{const u=location.href.split("#")[0]; try{await navigator.clipboard.writeText(u); $("#share").textContent="Link copied";}catch(e){$("#share").textContent=u;}};
-  if(S.sent){ $("#svt").textContent="Your answers are in. Thanks for playing."; return; }
+  if(S.sent){ $("#svt").textContent="Your answers are in. Thank you for your time."; return; }
   const trySend=async()=>{
     $("#svt").textContent="Saving your answers…";
-    try{const j=await post(payload()); if(!j.ok) throw 0; S.sent=true; save(); $("#svt").textContent="Your answers are in. Thanks for playing.";}
+    try{const j=await post(payload()); if(!j.ok) throw 0; S.sent=true; save(); $("#svt").textContent="Your answers are in. Thank you for your time.";}
     catch(e){ $("#sv").innerHTML=`<p class="muted" style="margin:0 0 10px">We couldn't save your answers yet. They're kept on this device, so nothing is lost.</p><button class="btn" id="rt">Try again</button>`; $("#rt").onclick=()=>{ $("#sv").innerHTML='<p style="margin:0" class="muted" id="svt"></p>'; trySend(); }; }
   };
   trySend();
