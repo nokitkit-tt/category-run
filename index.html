@@ -111,11 +111,22 @@ input::placeholder,textarea::placeholder{color:#a89f97}
 .mv{appearance:none;width:34px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--field);color:var(--fg);cursor:pointer;font-size:14px}
 .mv:disabled{opacity:.3;cursor:default}
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
-table{border-collapse:collapse;width:100%;min-width:600px;font-size:14px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
 th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
 th:first-child,td:first-child{text-align:left}
 th{font:600 12px/1.3 var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;background:var(--panel2)}
 tr:last-child td{border-bottom:0}
+@media (max-width:560px){
+  .tbl{border:0;overflow:visible}
+  table{min-width:0}
+  thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tr{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:6px 0;background:var(--panel)}
+  td{display:flex;justify-content:space-between;gap:12px;border-bottom:0;padding:6px 14px;text-align:right}
+  td::before{content:attr(data-l);color:var(--muted);font-size:13px;text-align:left}
+  td:first-child{font-weight:600;color:var(--accent);text-align:left}
+  td:first-child::before{content:none}
+}
 .wc{font:500 12px/1 var(--mono);color:var(--muted);text-align:right}
 .wc.over{color:var(--warn)}
 .mine{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:12px;max-height:180px;overflow:auto;font-size:14px;white-space:pre-wrap;color:var(--muted)}
@@ -149,11 +160,11 @@ const KEY = "ncr_run_v1", BLOCK_KEY = "ncr_block_v1";
 
 /* ======= CONTENT ======= */
 const LEVELS = [
-  {id:"L1", name:"Speed Round", time:"6 × 45 sec", tests:"Quick maths", intro:"Six money questions, 45 seconds each. Tap an answer and it's locked. Calculator allowed, GST ignored, panic optional."},
+  {id:"L1", name:"Speed Round", time:"6 × 60 sec", tests:"Quick maths", intro:"Six money questions, 60 seconds each. Tap an answer and it's locked. Calculator allowed, GST ignored, panic optional."},
   {id:"L2", name:"Brain Dump", time:"3 min", tests:"Going wide", intro:"One mystery, three minutes. Write every reason you can think of, one per line. Wild ones count too. Every idea earns XP."},
   {id:"L3", name:"Triage", time:"4 min", tests:"Structure", intro:"Your Level 2 list comes back. You only get time for three checks. Which ones, in what order, and what number would you pull for each?"},
   {id:"L4", name:"Pick Your Bets", time:"5 min", tests:"Prioritising", intro:"Six ideas from one very excited team meeting. Rank them from best bet to worst, then defend your top pick and roast your bottom one."},
-  {id:"L5", name:"The Channel Case", time:"10 min", tests:"Depth", intro:"Four channels, one ₹1 Cr pot, and everyone wants a slice. Do the maths, make the call, and tell us what could prove you wrong."},
+  {id:"L5", name:"The Channel Case", time:"10 min", tests:"Depth", intro:"Four channels, one ₹1 Cr pot, and everyone wants a slice. Read the numbers, make the call, and tell us what could prove you wrong."},
   {id:"L6", name:"Gut Check", time:"3 × 30 sec", tests:"Judgement", intro:"Three quick calls, 30 seconds each. Pick a side and give a one-line reason. No sitting on the fence."}
 ];
 
@@ -178,12 +189,13 @@ const BETS = [
 ];
 
 const CHANNELS = [
-  ["Own website", "35%", "+1%", "72%", "14%", "36%", "28%"],
-  ["Amazon", "40%", "+3%", "66%", "30%", "17%", "Not visible"],
-  ["Quick commerce", "15%", "+12%", "60%", "34%", "9%", "Not visible"],
-  ["Nykaa & others", "10%", "0%", "63%", "32%", "14%", "Not visible"]
+  ["Own website", "35%", "+1%", "₹22", "28%", "Yes"],
+  ["Amazon", "40%", "+3%", "₹19", "Not shared", "No"],
+  ["Quick commerce", "15%", "+12%", "₹17", "Not shared", "No"],
+  ["Nykaa & others", "10%", "0%", "₹17", "Not shared", "No"]
 ];
 
+const CH_HEAD = ["Channel","Share of sales","Growth per month","Kept per ₹100 sold","Reorder in 90 days","Customer data?"];
 const GUT = [
   {q:"A creator with 3 million followers wants ₹25 lakh for one reel. Your whole month's marketing budget is ₹80 lakh.", o:["Take it","Pass"]},
   {q:"Your bestseller slid from 4.5★ to 4.1★ in three weeks. Your first phone call goes to:", o:["Operations","Customer support","Product / R&D"]},
@@ -404,7 +416,7 @@ function l1(qi=0){
   const pick=i=>{ if(done) return; done=true; clearInterval(TIMER); S.a.speed[qi]=i; save();
     if(i>=0){app.querySelector(`.opt[data-i="${i}"]`).classList.add("sel"); addXP(20);} setTimeout(()=>l1(qi+1), i>=0?350:0); };
   app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
-  timer(45, ()=>pick(-1));
+  timer(60, ()=>pick(-1));
 }
 
 /* L2 Brain dump */
@@ -465,12 +477,12 @@ function l5(){
   app.innerHTML=`<div class="stack fade">
     <span class="eyebrow">The Channel Case · Depth</span>${timerHTML}
     <div class="card stack">
-      <div class="q">Finance just handed you an extra ₹1 Cr for next quarter's marketing. Four channels are fighting for it. Margins and costs below are a % of each channel's own revenue.</div>
+      <div class="q">Finance just handed you an extra ₹1 Cr for next quarter's marketing. Four channels want it. <b>Kept per ₹100 sold</b> is the profit left after product cost, discounts, channel fees and marketing.</div>
       <div class="tbl"><table>
-        <thead><tr><th>Channel</th><th>Share of revenue</th><th>Growth (month on month)</th><th>Gross margin after discounts</th><th>Channel costs (commission, shipping, payment)</th><th>Marketing spend</th><th>90-day repeat</th></tr></thead>
-        <tbody>${CHANNELS.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody>
+        <thead><tr><th>Channel</th><th>Share of sales</th><th>Growth per month</th><th>Kept per ₹100 sold</th><th>Customers who reorder in 90 days</th><th>We get customer data?</th></tr></thead>
+        <tbody>${CHANNELS.map(r=>`<tr>${r.map((c,i)=>`<td data-l="${CH_HEAD[i]}">${c}</td>`).join("")}</tr>`).join("")}</tbody>
       </table></div>
-      <label class="f">1. Do the maths: what does each channel actually keep after all these costs? What surprised you?<textarea id="c1" rows="4" maxlength="1500">${esc(S.a.caseMaths)}</textarea><span class="wc" id="w1"></span></label>
+      <label class="f">1. Which channel is the strongest business today, and which is the most exciting? Are they the same one?<textarea id="c1" rows="4" maxlength="1500">${esc(S.a.caseMaths)}</textarea><span class="wc" id="w1"></span></label>
       <label class="f">2. Split the ₹1 Cr. Who gets what, and why?<textarea id="c2" rows="6" maxlength="2500">${esc(S.a.caseSplit)}</textarea><span class="wc" id="w2"></span></label>
       <label class="f">3. What's one thing you don't know that could flip your call?<textarea id="c3" rows="4" maxlength="1500">${esc(S.a.caseMissing)}</textarea><span class="wc" id="w3"></span></label>
       <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div>
