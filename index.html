@@ -167,8 +167,8 @@ const LEVELS = [
   {id:"L3", name:"Triage", time:"4 min", tests:"Structure", intro:"Your Level 2 list comes back. Pick the three things you would check first, in order, and the number you would look at for each."},
   {id:"L4", name:"Pick Your Bets", time:"5 min", tests:"Prioritising", intro:"Six ideas from your team. Rank them from best bet to worst, then explain your top and bottom picks."},
   {id:"L5", name:"The Channel Case", time:"10 min", tests:"Depth", intro:"Four channels and ₹1 Cr to invest. Read the numbers, make the call, and tell us what could change your mind."},
-  {id:"L6", name:"Name It", time:"2 min", tests:"Creative judgement", intro:"A finished product without a name. Give it one, write the line for the pack, and choose where it launches. Enjoy this one."},
-  {id:"L7", name:"Gut Check", time:"3 × 30 sec", tests:"Judgement", intro:"Three quick calls, 30 seconds each. Pick a side and add a short reason."}
+  {id:"L6", name:"Name It", time:"3 min", tests:"Creative judgement", intro:"A finished product without a name. Give it one, write the line for the pack, and choose where it launches. Enjoy this one."},
+  {id:"L7", name:"Gut Check", time:"3 × 45 sec", tests:"Judgement", intro:"Three quick calls, 45 seconds each. Pick a side and add a short reason."}
 ];
 
 const SPEED = [
@@ -541,7 +541,7 @@ function lName(){
   const sync=()=>{n.name=$("#n1").value; n.line=$("#n2").value; n.where=$("#n3").value; save();};
   ["n1","n2","n3"].forEach(id=>$("#"+id).addEventListener("input",sync));
   const end=()=>{sync(); addXP(100); go("L7");};
-  $("#fin").onclick=end; timer(120,end);
+  $("#fin").onclick=end; timer(180,end);
 }
 
 /* L7 Gut */
@@ -559,7 +559,7 @@ function l6(qi=0){
   let done=false;
   const end=()=>{ if(done) return; done=true; clearInterval(TIMER); S.a.gut[qi]=`${qi+1}) ${choice==null?"No pick":g.o[choice]}: ${$("#gr").value.trim()||"(no reason)"}`; save(); if(choice!=null) addXP(20); l6(qi+1); };
   $("#nx").onclick=end; $("#gr").addEventListener("keydown",e=>{if(e.key==="Enter"&&choice!=null) end();});
-  timer(30,end);
+  timer(45,end);
 }
 
 /* Finish */
