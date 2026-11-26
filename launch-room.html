@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Launch Room · Nat Habit</title>
+<meta name="description" content="Round 2 assignment for the Sr Category Growth Associate role at Nat Habit. Take one product from idea to day 30 in about 1 hour 45 minutes.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centred game column, sticky HUD on top, each screen is a card that swaps in place. */
+:root{
+  --bg:#ffffff; --panel:#ffffff; --panel2:#faf7f4; --field:#ffffff; --line:#ebe4dc;
+  --fg:#1f1b18; --muted:#6f6760; --accent:#b4532a; --accent-soft:#f8ece5; --accent-ink:#ffffff;
+  --warn:#b4532a; --ok:#3f7d4f;
+  --display:"Inter Tight", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --body:"Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono:"Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);min-height:100vh;font-variant-numeric:tabular-nums}
+.r{color:var(--accent)}
+[hidden]{display:none!important}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+/* HUD */
+.hud{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hud-in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px;padding-block:10px;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+.brand{font:600 15px/1 var(--display);letter-spacing:.01em;white-space:nowrap}
+.brand small{display:block;font:500 11px/1.3 var(--body);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.pips{display:flex;gap:5px;flex:1;justify-content:center;min-width:0}
+.pip{width:22px;height:6px;border-radius:3px;background:var(--line)}
+.pip.done{background:var(--fg)} .pip.now{background:var(--accent)}
+.xp{font:600 13px/1 var(--display);color:var(--accent);white-space:nowrap}
+.xp span{color:var(--muted);font-weight:500}
+/* type */
+h1{font:700 clamp(42px,8.5vw,76px)/1 var(--display);letter-spacing:-.035em;margin:10px 0 14px;text-wrap:balance}
+h2{font:600 clamp(24px,4.6vw,32px)/1.15 var(--display);letter-spacing:-.02em;margin:6px 0 10px;text-wrap:balance}
+h3{font:600 18px/1.3 var(--display);margin:0 0 6px}
+p{margin:0 0 12px}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* blocks */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;color:var(--fg);background:var(--panel2)}
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.lv{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel2);min-width:0}
+.lv b{display:block;font:600 15px/1.25 var(--display)}
+.lv .n{font:600 11.5px/1 var(--display);letter-spacing:.08em;color:var(--accent)}
+.lv .t{font-size:12.5px;color:var(--muted)}
+@media (max-width:560px){.levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.counter{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.counter .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(180,83,42,.15);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(180,83,42,0)}}
+.counter b{color:var(--fg);font-family:var(--mono)}
+/* buttons */
+.btn{appearance:none;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 15px/1 var(--display);padding:15px 24px;letter-spacing:.01em;cursor:pointer;transition:transform .12s, filter .12s}
+.btn:hover{filter:brightness(1.08)} .btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn:focus-visible,.opt:focus-visible,input:focus-visible,textarea:focus-visible,.mv:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+/* forms */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;min-width:0}
+label.f .hint{font-weight:400;color:var(--muted);font-size:12.5px}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=url],textarea{width:100%;background:var(--field);border:1px solid var(--line);border-radius:10px;color:var(--fg);font:16px/1.45 var(--body);padding:11px 12px}
+textarea{resize:vertical;min-height:120px}
+input::placeholder,textarea::placeholder{color:#a89f97}
+.seg{display:flex;gap:8px}
+.seg label{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:11px;cursor:pointer;font-weight:600;background:var(--field)}
+.seg input{accent-color:var(--accent)}
+.seg label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.file{border:1.5px dashed var(--line);border-radius:12px;padding:16px;text-align:center;cursor:pointer;background:var(--field)}
+.file.has{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+.flag{border-left:3px solid var(--warn);background:var(--accent-soft);padding:10px 12px;border-radius:8px;font-size:14px}
+.err{color:var(--warn);font-size:13px;min-height:1em}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted)}
+.consent input{margin-top:4px;accent-color:var(--accent)}
+/* game */
+.timerbar{display:flex;align-items:center;gap:12px}
+.track{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.fill{height:100%;background:var(--accent);width:100%;transition:width 1s linear}
+.timerbar.low .fill{background:var(--warn)}
+.clock{font:600 20px/1 var(--display);min-width:64px;text-align:right}
+.timerbar.low .clock{color:var(--warn)}
+.q{font:600 19px/1.45 var(--body)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:560px){.opts{grid-template-columns:1fr}}
+.opt{appearance:none;text-align:left;border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:12px;padding:14px 16px;font:600 16px/1.35 var(--body);cursor:pointer;display:flex;gap:12px;align-items:center}
+.opt .k{font:600 13px/1 var(--display);color:var(--accent);border:1px solid var(--line);border-radius:6px;padding:5px 7px}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.ideas{font:600 15px/1 var(--display);color:var(--accent)}
+.pop{position:fixed;right:20px;top:64px;font:700 20px/1 var(--display);color:var(--accent);pointer-events:none;animation:pop .9s ease-out forwards}
+@keyframes pop{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-36px)}}
+.bets{display:flex;flex-direction:column;gap:8px}
+.bet{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:12px}
+.bet .rk{font:700 22px/1 var(--display);color:var(--accent);min-width:26px}
+.bet .tx{flex:1;min-width:0;font-size:14.5px}
+.bet .tx b{display:block;font-size:15px;margin-bottom:2px}
+.mvs{display:flex;flex-direction:column;gap:4px}
+.mv{appearance:none;width:34px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--field);color:var(--fg);cursor:pointer;font-size:14px}
+.mv:disabled{opacity:.3;cursor:default}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{font:600 12px/1.3 var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;background:var(--panel2)}
+tr:last-child td{border-bottom:0}
+@media (max-width:560px){
+  .tbl{border:0;overflow:visible}
+  table{min-width:0}
+  thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tr{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:6px 0;background:var(--panel)}
+  td{display:flex;justify-content:space-between;gap:12px;border-bottom:0;padding:6px 14px;text-align:right}
+  td::before{content:attr(data-l);color:var(--muted);font-size:13px;text-align:left}
+  td:first-child{font-weight:600;color:var(--accent);text-align:left}
+  td:first-child::before{content:none}
+}
+.wc{font:500 12px/1 var(--mono);color:var(--muted);text-align:right}
+.wc.over{color:var(--warn)}
+.mine{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:12px;max-height:180px;overflow:auto;font-size:14px;white-space:pre-wrap;color:var(--muted)}
+.big{font:700 clamp(52px,13vw,100px)/1 var(--display);letter-spacing:-.04em;color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat b{display:block;font:600 26px/1 var(--display);margin-bottom:6px}
+.stat span{font-size:13px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--warn);color:#fff;font:600 14px/1.3 var(--body);padding:12px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;max-width:calc(100% - 32px);text-align:center;z-index:20}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.breath{width:56px;height:56px;border-radius:50%;background:var(--accent-soft);border:2px solid var(--accent);animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.25);opacity:.75}}
+.foot{margin-top:28px;font-size:12.5px;color:var(--muted);text-align:center}
+.fade{animation:in .35s ease-out}
+@keyframes in{from{opacity:.0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+/* additions for The Launch Room */
+select{width:100%;background:var(--field);border:1px solid var(--line);border-radius:10px;color:var(--fg);font:15px/1.3 var(--body);padding:10px 10px}
+select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dossier-btn{appearance:none;border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:999px;font:600 13px/1 var(--display);padding:9px 13px;cursor:pointer;white-space:nowrap}
+.dossier-btn:hover{border-color:var(--accent)}
+.modal{position:fixed;inset:0;z-index:30;background:rgba(31,27,24,.45);display:flex;justify-content:center;align-items:flex-start;padding:24px 12px;overflow:auto}
+.sheet{background:var(--panel);border-radius:14px;max-width:820px;width:100%;padding:20px;position:relative}
+.sheet .x{position:sticky;top:0;float:right;appearance:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;width:38px;height:38px;font-size:18px;cursor:pointer}
+.ds h3{margin-top:18px}
+.ds ul{margin:0 0 10px;padding-left:20px}
+.ds li{margin:3px 0}
+.quote{border-left:3px solid var(--accent);padding:6px 12px;background:var(--panel2);border-radius:6px;margin:6px 0;font-size:14.5px}
+.quote span{display:block;color:var(--muted);font-size:12.5px}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:560px){.qgrid{grid-template-columns:1fr}}
+.sum{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);font-weight:600;font-size:14px}
+.sum.bad{border-color:var(--warn);color:var(--warn)}
+.sum.good{border-color:var(--ok);color:var(--ok)}
+.plan td input,.plan td select{min-width:0}
+.plan td{vertical-align:middle}
+.plan input[type=number]{padding:8px 10px;max-width:130px;margin-left:auto;display:block}
+.task{display:grid;grid-template-columns:1fr 170px 120px;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel2)}
+.task b{font-size:15px;display:block}
+.task span{font-size:13px;color:var(--muted)}
+@media (max-width:620px){.task{grid-template-columns:1fr 1fr}.task>div:first-child{grid-column:1/-1}}
+.boss{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--accent);background:var(--accent-soft);border-radius:14px;padding:16px}
+.avatar{flex:none;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font:700 20px/1 var(--display)}
+.boss .who{font:600 15px/1.2 var(--display)}
+.boss .who span{display:block;font:500 12.5px/1.4 var(--body);color:var(--muted)}
+.boss .said{font:600 17px/1.5 var(--body);margin-top:8px}
+.myplan{font-size:14px;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px}
+.myplan b{color:var(--fg)}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.steps li{counter-increment:s;display:flex;gap:10px;font-size:15px}
+.steps li::before{content:counter(s);flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font:700 13px/24px var(--display);text-align:center}
+.alert{border:1px solid var(--warn);border-radius:12px;padding:12px 14px;background:#fff;font-size:14.5px}
+.alert b{color:var(--warn)}
+.pl td:nth-child(3){font-weight:600}
+</style>
+</head>
+<body>
+<div class="hud"><div class="hud-in">
+  <div class="brand">The Launch <span class="r">Room.</span><small>Nat Habit · Round 2</small></div>
+  <div class="pips" id="pips" aria-hidden="true"></div>
+  <button class="dossier-btn" id="dbtn" hidden>Case file</button>
+  <div class="xp" id="xp"></div>
+</div></div>
+
+<main class="wrap" id="app"></main>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="Case file"><div class="sheet"><button class="x" id="mx" aria-label="Close case file">×</button><div class="ds" id="dsbody"></div></div></div>
+
+<script>
+/* ======= CONFIG ======= */
+// Paste the Apps Script web app URL here after deploying launch-room-backend.gs. Until then the game runs in demo mode.
+const API_URL = "https://script.google.com/macros/s/AKfycbyU1ZDSpdgc-N-1XpP5CsYAMb7TcI50S--AtAvA0kvOPzD5XJ11o_98ufeUu20BTSL6/exec";
+const KEY = "nh_launchroom_v1";
+
+/* ======= CASE DATA ======= */
+const COST = {s:48, l:78};          // product cost per bottle before GST: 180 ml, 340 ml
+const GST = 0.18, GM_FLOOR = 0.60, TARGET_L = 1800, MKT_L = 120;
+const CHANNELS = [
+  {k:"web", n:"Own website", share:"15%", disc:"15%", cost:"₹45 shipping and payment per order (orders average ₹520)", note:"You own the customer data. 30% reorder within 90 days."},
+  {k:"amz", n:"Amazon", share:"30%", disc:"20%", cost:"18% of selling price", note:"Ratings and reviews make or break a new launch here."},
+  {k:"fk",  n:"Flipkart", share:"10%", disc:"25% (cap 28%)", cost:"16% of selling price", note:"Third-party sellers often discount deeper than the cap."},
+  {k:"qc",  n:"Quick commerce", share:"15%", disc:"10%", cost:"25% of selling price, plus ₹1.5 lakh listing fee per city", note:"Growing 10% a month, top 6 metros."},
+  {k:"mt",  n:"Modern & general trade", share:"30%", disc:"0%", cost:"Retailer 28% + distributor 8% margin. ₹40 lakh to get into 500 key stores", note:"Slow to build, biggest reach."}
+];
+const MKT = [
+  {k:"aw", n:"Meta and YouTube awareness"},
+  {k:"mp", n:"Amazon and Flipkart ads"},
+  {k:"cr", n:"Creators and influencers"},
+  {k:"sa", n:"Sampling (gyms, salons, colleges)"},
+  {k:"qv", n:"Quick commerce visibility"},
+  {k:"mv", n:"In-store visibility (modern trade)"}
+];
+const OWNERS = ["R&D","Packaging & design","Legal & regulatory","Supply chain","Finance","Ecommerce team","Marketing","Sales (trade)"];
+const WEEKS = ["W-12","W-11","W-10","W-9","W-8","W-7","W-6","W-5","W-4","W-3","W-2","W-1","W0 (launch)","W+1","W+2","W+3"];
+const TASKS = [
+  {k:"stab", t:"Stability and safety test signed off", d:"Takes 8 weeks. The earliest it can start is W-12."},
+  {k:"art",  t:"Final artwork and claims approved", d:"Packaging can't be ordered until this is final."},
+  {k:"pko",  t:"Packaging order placed with the vendor", d:"Bottles and labels arrive 6 weeks after the order."},
+  {k:"prod", t:"First production batch ready", d:"Needs packaging in hand and stability signed off. Takes 3 weeks."},
+  {k:"stock",t:"Stock reaches warehouses and dark stores", d:"1 week after production."},
+  {k:"price",t:"Pricing and discount caps approved", d:"Needed before any listing goes live."},
+  {k:"list", t:"Listings live on marketplaces and quick commerce", d:"Needs approved prices, final pack images and stock."},
+  {k:"seed", t:"Creator kits delivered", d:"Creators need the product 3 weeks before they post."},
+  {k:"ads",  t:"Launch ad films shot", d:"Need the real bottle on camera."},
+  {k:"mt",   t:"Trade distributors onboarded, stores listed", d:"Takes 8 weeks from the first meeting."}
+];
+const KEYOWN = {stab:"R&D",art:"Packaging & design",pko:"Supply chain",prod:"Supply chain",stock:"Supply chain",price:"Finance",list:"Ecommerce team",seed:"Marketing",ads:"Marketing",mt:"Sales (trade)"};
+const FIRES = [
+  {k:"A", t:"Amazon rating crash", d:"Rating fell from 4.4★ to 3.7★ in 10 days. 60% of 1★ reviews say the cap leaked in delivery. Amazon sales are 39% behind plan."},
+  {k:"B", t:"Flipkart seller at 45% off", d:"One third-party seller is selling your 340 ml at 45% off. Your website conversion fell from 2.1% to 1.4% the same week."},
+  {k:"C", t:"Quick commerce stock-out", d:"Out of stock for 5 days in Bengaluru and Mumbai, which are 52% of your quick commerce sales."},
+  {k:"D", t:"Your old shampoo is slipping", d:"Daily Shine is down 18% on Amazon and quick commerce since the launch."}
+];
+const WEEK3 = [
+  ["Amazon","9.0","5.5","Rating 4.4★ to 3.7★"],
+  ["Flipkart","3.0","4.2","One seller at 45% off"],
+  ["Own website","4.0","2.8","Conversion 2.1% to 1.4%"],
+  ["Quick commerce","4.0","2.0","Out of stock 5 days in 2 cities"],
+  ["Modern trade","2.0","2.1","On track"],
+  ["Total","22.0","16.6","25% behind"]
+];
+const PL = [
+  ["Gross sales (₹ lakh)","90","68"],
+  ["Average discount on MRP","18%","26%"],
+  ["Bottles sold","32,000","26,500"],
+  ["Mix: 180 ml / 340 ml","40 / 60","62 / 38"],
+  ["Gross margin (after discount and product cost)","66%","59%"],
+  ["Ad spend (₹ lakh)","38","44"],
+  ["New customers","14,000","11,200"],
+  ["Website customers who reordered within 30 days","8%","11%"],
+  ["Amazon rating","4.3★","3.9★"]
+];
+
+const LEVELS = [
+  {id:"L0", name:"The Brief", min:8,  tests:"Reading a business fast", intro:"Read the case file for one product launch. It stays open to you for the whole game through the Case file button at the top, so skim for the big picture now."},
+  {id:"L1", name:"Find the Itch", min:12, tests:"Consumer insight", intro:"Use the reviews, search trends and competitor gaps to decide who this shampoo is for and what it promises."},
+  {id:"L2", name:"Price It", min:15, tests:"Unit economics", intro:"Set the MRPs and check your margins. Keep a calculator handy (your phone is fine). Show the numbers, not just the answer."},
+  {id:"L3", name:"Plan the Year", min:15, tests:"Channel and budget planning", intro:"Spread the ₹18 Cr goal across channels, decide what launches when, and split the first ₹1.2 Cr of marketing."},
+  {id:"L4", name:"Run the Launch", min:14, tests:"Execution", intro:"Ten things have to happen before launch day. Give each an owner and a week, then name what could break."},
+  {id:"L5", name:"Defend It", min:14, tests:"Conviction and communication", intro:"Someone senior is about to pick a fight with your plan. You get 4 minutes to prepare, then you record a 30-second video reply on your phone."},
+  {id:"L6", name:"Fire Drill", min:15, tests:"Problem solving", intro:"It's week 3 after launch and several things are going wrong at once. Decide what you fix first and reply to the founder."},
+  {id:"L7", name:"Day 30", min:10, tests:"Reading a P&L", intro:"Month 1 numbers are in. Write the readout you would send the founder."}
+];
+const totalMin = LEVELS.reduce((a,l)=>a+l.min,0);
+
+const DOSSIER = `
+<div class="eyebrow">Case file</div>
+<h2>Brightwell Anti-Dandruff <span class="r">Shampoo.</span></h2>
+<p class="muted small">A made-up brand and made-up numbers. Everything you need is on this page.</p>
+
+<h3>1. The brand</h3>
+<ul>
+<li>Brightwell is a mass personal care brand doing ₹300 Cr a year. Hair care is ₹90 Cr of that.</li>
+<li>Its hero product is <b>Daily Shine shampoo</b>: 340 ml, MRP ₹249, about 1.2 lakh bottles a month.</li>
+<li>It sells on its own website, Amazon, Flipkart, quick commerce, and 6,000 modern and general trade stores through distributors.</li>
+</ul>
+
+<h3>2. The new product</h3>
+<ul>
+<li>An anti-dandruff shampoo: piroctone olamine (the anti-dandruff active) with tea tree and aloe. Gentle enough to use 3 to 4 times a week.</li>
+<li>In-house test, 30 people, 4 weeks: visible flakes down 68%, and 80% said their hair felt as soft as with a normal shampoo.</li>
+<li>Not dermatologist-tested yet. An external test costs ₹6 lakh and takes 6 weeks.</li>
+<li>Two packs: <b>180 ml</b> and <b>340 ml</b>. No name yet; the working name is Brightwell Anti-Dandruff.</li>
+</ul>
+
+<h3>3. Year 1 goals</h3>
+<ul>
+<li><b>₹18 Cr</b> gross sales (at selling price, including GST).</li>
+<li>Gross margin of <b>at least 60%</b> on every online channel.</li>
+<li>Marketing: <b>₹1.2 Cr for the first 3 months</b>, ₹3 Cr for the year.</li>
+<li>Daily Shine must not lose more than 10% of its sales.</li>
+</ul>
+
+<h3>4. The market</h3>
+<ul>
+<li>Anti-dandruff shampoo in India is a ₹3,500 Cr market, growing 9% a year.</li>
+<li>78% is sold offline. Online is 22% but growing 25% a year. In the metros, quick commerce is 30% of online anti-dandruff sales.</li>
+<li>Searches for "dandruff itchy scalp" jump about 40% from June to September. "Anti dandruff shampoo for dry hair" is up 65% on last year. "Dandruff shampoo for women" is up 30%.</li>
+</ul>
+
+<h3>5. Competitors</h3>
+<div class="tbl"><table>
+<thead><tr><th>Brand</th><th>Pack</th><th>MRP</th><th>Rating</th><th>What 1★ reviews say</th></tr></thead>
+<tbody>
+<tr><td>ClearCo AD</td><td data-l="Pack">340 ml</td><td data-l="MRP">₹399</td><td data-l="Rating">4.2★</td><td data-l="1★ reviews">"Hair feels like straw", strong smell</td></tr>
+<tr><td>HeadFresh</td><td data-l="Pack">180 ml</td><td data-l="MRP">₹199</td><td data-l="Rating">4.0★</td><td data-l="1★ reviews">"Dandruff back in 2 weeks"</td></tr>
+<tr><td>Scalpwise Derm</td><td data-l="Pack">100 ml</td><td data-l="MRP">₹549</td><td data-l="Rating">4.4★</td><td data-l="1★ reviews">"Works, but too expensive to use often"</td></tr>
+<tr><td>Herba Neem AD</td><td data-l="Pack">200 ml</td><td data-l="MRP">₹245</td><td data-l="Rating">3.9★</td><td data-l="1★ reviews">"Doesn't lather, didn't work"</td></tr>
+</tbody></table></div>
+
+<h3>6. What people say</h3>
+<div class="qgrid">
+<div class="quote">"I ride with a helmet all day. My scalp itches by 4 pm."<span>Amazon review, man, 27</span></div>
+<div class="quote">"Flakes show up on every black kurti. So embarrassing in meetings."<span>Instagram comment</span></div>
+<div class="quote">"Anti-dandruff shampoos dry my hair, so I switch back to my normal one. Then the dandruff comes back."<span>Amazon review</span></div>
+<div class="quote">"It works while I use it. Stop for a week and it's back."<span>Flipkart review</span></div>
+<div class="quote">"The medicine smell stays on my pillow."<span>Amazon review</span></div>
+<div class="quote">"The derm one worked, but ₹549 for 100 ml? Not every week."<span>Reddit</span></div>
+<div class="quote">"Tried curd and lemon. Messy, and it didn't last."<span>YouTube comment</span></div>
+<div class="quote">"I go to the gym twice a day. Sweat makes it worse."<span>Amazon review</span></div>
+<div class="quote">"My husband and I share one bottle. It's gone in 10 days."<span>Flipkart review</span></div>
+<div class="quote">"Monsoon means dandruff season for me. Every single year."<span>Instagram comment</span></div>
+<div class="quote">"The hard water in my PG makes my scalp flaky."<span>Amazon review</span></div>
+<div class="quote">"I don't want my hair smelling like a hospital."<span>Amazon review</span></div>
+</div>
+
+<h3>7. Product cost</h3>
+<ul>
+<li>Cost per bottle, before GST: <b>180 ml = ₹48</b> (formula 24, bottle and cap 14, label and box 4, filling and freight 6). <b>340 ml = ₹78</b> (formula 44, bottle and flip cap 22, label 5, filling 7).</li>
+<li>GST on shampoo is <b>18%</b>. MRP and selling prices include GST.</li>
+<li><b>Gross margin</b> = (selling price without GST − product cost) ÷ selling price without GST. Channel fees and ads are not part of gross margin.</li>
+</ul>
+
+<h3>8. Channels today (Brightwell hair care)</h3>
+<div class="tbl"><table>
+<thead><tr><th>Channel</th><th>Share of sales</th><th>Usual discount</th><th>Channel cost</th><th>Notes</th></tr></thead>
+<tbody>${CHANNELS.map(c=>`<tr><td>${c.n}</td><td data-l="Share">${c.share}</td><td data-l="Discount">${c.disc}</td><td data-l="Channel cost">${c.cost}</td><td data-l="Notes">${c.note}</td></tr>`).join("")}</tbody>
+</table></div>
+
+<h3>9. Launch timing</h3>
+<ul>
+<li>Launch day is <b>W0</b>, 12 weeks from today (today is W-12). The founder wants it live before the monsoon.</li>
+<li>Stability test: 8 weeks, can start at W-12 at the earliest. Packaging: arrives 6 weeks after the order. Production: 3 weeks once packaging is in. Stock reaches warehouses 1 week after production.</li>
+<li>Creators need the product 3 weeks before they post. Trade distributor onboarding takes 8 weeks.</li>
+</ul>`;
+
+/* ======= STATE ======= */
+const STEPS = ["intro","gate",...LEVELS.map(l=>l.id),"done"];
+function fresh(){return {step:"intro", id:null, invite:"", profile:{}, a:{}, t0:null, lvT:{}, tabs:0, pastes:0, reloads:0, keys:0, sent:false, levelLive:false, l5stage:"notes"};}
+let S = load() || fresh();
+function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY, JSON.stringify(S))}catch(e){}}
+const $ = (s, r=document)=>r.querySelector(s);
+const app = $("#app");
+let TIMER = null;
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function words(s){return (String(s||"").trim().match(/\S+/g)||[]).length}
+function num(v){const n=parseFloat(String(v??"").replace(/[^\d.\-]/g,"")); return isNaN(n)?null:n}
+const inr = n => n==null ? "–" : "₹"+(Math.round(n*10)/10).toLocaleString("en-IN");
+const pct = n => n==null ? "–" : (Math.round(n*1000)/10)+"%";
+try{ const u=new URL(location.href); const c=u.searchParams.get("c"); if(c && !S.invite){S.invite=c.slice(0,40); save();} }catch(e){}
+
+function hud(){
+  const i = STEPS.indexOf(S.step);
+  $("#pips").innerHTML = LEVELS.map((l,k)=>{const idx=k+2; return `<span class="pip ${i>idx?"done":i===idx?"now":""}"></span>`}).join("");
+  $("#xp").textContent = (i>=2&&i<=LEVELS.length+1) ? `${i-1} of ${LEVELS.length}` : "";
+  $("#dbtn").hidden = !(i>=2 && S.step!=="done");
+}
+function go(step){clearInterval(TIMER); S.step=step; S.levelLive=false; save(); render(); window.scrollTo({top:0});}
+
+/* case file modal */
+function openDossier(){ $("#dsbody").innerHTML=DOSSIER; $("#modal").hidden=false; S.dossierOpens=(S.dossierOpens||0)+1; save(); $("#mx").focus(); }
+function closeDossier(){ $("#modal").hidden=true; }
+$("#dbtn").onclick=openDossier; $("#mx").onclick=closeDossier;
+$("#modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeDossier(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape" && !$("#modal").hidden) closeDossier(); });
+
+/* integrity: tab switches, pastes (blocked everywhere except the video link box), reloads, keys */
+document.addEventListener("visibilitychange",()=>{ if(document.hidden && S.levelLive){S.tabs++; save();} });
+function pasteAllowed(t){ return t && t.id==="vid"; }
+function noPaste(e){
+  if(!S.levelLive) return;
+  const t=e.target; if(!t || !/^(TEXTAREA|INPUT)$/.test(t.tagName)) return;
+  if(pasteAllowed(t)) return;
+  e.preventDefault(); S.pastes++; save(); toast("Pasting is turned off here. Please type your answer.");
+}
+document.addEventListener("paste",noPaste,true);
+document.addEventListener("drop",noPaste,true);
+document.addEventListener("beforeinput",e=>{ if(/insertFromPaste|insertFromDrop|insertFromYank/.test(e.inputType||"")) noPaste(e); },true);
+document.addEventListener("keydown",e=>{ if(S.levelLive && /^(TEXTAREA|INPUT)$/.test(e.target.tagName) && !pasteAllowed(e.target) && e.key.length===1){S.keys=(S.keys||0)+1;} },true);
+function toast(m){ let t=document.getElementById("toast"); if(!t){t=document.createElement("div"); t.id="toast"; t.className="toast"; t.setAttribute("role","status"); document.body.appendChild(t);} t.textContent=m; t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),2600); }
+
+/* ======= API ======= */
+const live = ()=>/^https:\/\/script\.google\.com\//.test(API_URL);
+async function post(body){
+  if(!live()){ console.log("[demo] would POST", body); return {ok:true, id:"demo-"+Date.now().toString(36)}; }
+  const r = await fetch(API_URL,{method:"POST", body:JSON.stringify(body)});
+  return r.json();
+}
+async function saveFields(fields, tries=3){
+  for(let i=0;i<tries;i++){ try{ const j=await post({action:"save", id:S.id, fields}); if(j.ok) return true; }catch(e){} await new Promise(r=>setTimeout(r,1500*(i+1))); }
+  return false;
+}
+
+/* ======= TIMER ======= */
+function timer(sec, onEnd){
+  clearInterval(TIMER);
+  const bar=$("#tb"), fill=$("#tf"), clk=$("#tc");
+  const end=Date.now()+sec*1000;
+  const tick=()=>{
+    const left=Math.max(0, Math.round((end-Date.now())/1000));
+    clk.textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`;
+    fill.style.width=(left/sec*100)+"%";
+    bar.classList.toggle("low", left<=Math.min(60, sec*0.15));
+    if(left===60 && sec>120) toast("1 minute left on this level.");
+    if(left<=0){clearInterval(TIMER); onEnd();}
+  };
+  tick(); TIMER=setInterval(tick,1000);
+}
+const timerHTML = `<div class="timerbar" id="tb"><div class="track"><div class="fill" id="tf"></div></div><div class="clock" id="tc">0:00</div></div>`;
+function startLevel(id){ S.levelLive=true; if(!S.lvStart||S.curLv!==id){S.lvStart=Date.now(); S.curLv=id;} save(); }
+/* each level has a fixed deadline from its first start, so a reload never buys extra time */
+function remain(id,sec){ S.dl=S.dl||{}; if(!S.dl[id]){S.dl[id]=Date.now()+sec*1000; save();} return Math.max(0,Math.round((S.dl[id]-Date.now())/1000)); }
+function endLevel(id){ S.lvT[id]=Math.round((Date.now()-(S.lvStart||Date.now()))/1000); S.levelLive=false; save(); }
+function wc(el,out,max){const u=()=>{const n=words(el.value); out.textContent=`${n} / ${max} words`; out.classList.toggle("over",n>max)}; el.addEventListener("input",u); u();}
+function bindText(ids){ ids.forEach(id=>{const el=$("#"+id); if(!el) return; el.addEventListener("input",()=>{S.a[id]=el.value; save();});}); }
+const ta=(id,rows,max,ph="")=>`<textarea id="${id}" rows="${rows}" maxlength="${max*12}" placeholder="${ph}">${esc(S.a[id]||"")}</textarea><span class="wc" id="${id}_w"></span>`;
+const inp=(id,type="text",extra="")=>`<input id="${id}" type="${type}" ${extra} value="${esc(S.a[id]||"")}" autocomplete="off">`;
+
+/* ======= SCREENS ======= */
+function render(){
+  hud();
+  const s=S.step;
+  if(s==="intro") return intro();
+  if(s==="gate") return gate();
+  if(s==="done") return done();
+  const lv = LEVELS.find(l=>l.id===s);
+  if(lv) return levelIntro(lv);
+}
+
+function intro(){
+  app.innerHTML = `<div class="stack fade">
+    <div><div class="eyebrow">Round 2 · Sr Category Growth Associate</div>
+    <h1>The Launch <span class="r">Room.</span></h1>
+    <p class="muted" style="font-size:18px;max-width:60ch">Take one product from a blank page to its first 30 days on shelf. Eight levels, one story, about ${Math.round(totalMin/5)*5} minutes in total. This is close to what a category owner does every week.</p></div>
+    <div class="levels">${LEVELS.map((l,i)=>`<div class="lv"><span class="n">LEVEL ${i}</span><b>${l.name}</b><span class="t">${l.min} min · ${l.tests}</span></div>`).join("")}</div>
+    <div class="card stack small">
+      <h3>Before you start</h3>
+      <ol class="steps">
+        <li><span>Block <b>1 hour 50 minutes</b> in one sitting, on a laptop, somewhere quiet with good internet.</span></li>
+        <li><span>Keep your <b>phone</b> nearby: it's your calculator, and in Level 5 you'll record a 30-second video on it.</span></li>
+        <li><span>Before you begin, check you can upload a video as <b>unlisted on YouTube</b>, or to <b>Google Drive or Loom</b> with "anyone with the link" access.</span></li>
+        <li><span>Each level has its own timer and closes when the timer runs out. You can take a short break <i>between</i> levels.</span></li>
+        <li><span>Please type every answer in your own words. Pasting is off everywhere except the video link box. Stay on this tab; leaving it is recorded.</span></li>
+      </ol>
+    </div>
+    <div><button class="btn" id="go">I'm ready</button></div>
+  </div>`;
+  $("#go").onclick=()=>go(S.id?LEVELS[0].id:"gate");
+}
+
+function gate(){
+  const p=S.profile;
+  app.innerHTML = `<form class="stack fade" id="gf" novalidate>
+    <div><div class="eyebrow">Check-in</div><h2>Who's <span class="r">playing?</span></h2><p class="muted">Use the same email and phone you applied with. The clock starts on the next screen.</p></div>
+    <div class="card stack"><div class="grid2">
+      <label class="f">Full name<input id="g_name" type="text" autocomplete="name" value="${esc(p.name||"")}"></label>
+      <label class="f">Email<input id="g_email" type="email" autocomplete="email" value="${esc(p.email||"")}"></label>
+      <label class="f">Phone<span class="hint">10-digit mobile number</span><input id="g_phone" type="tel" inputmode="numeric" autocomplete="tel" value="${esc(p.phone||"")}"></label>
+      <label class="f">Invite code<span class="hint">From your invite link. Leave it if it's filled.</span><input id="g_inv" type="text" value="${esc(S.invite||"")}"></label>
+    </div>
+    <label class="consent"><input id="g_ok" type="checkbox"> <span>I'll do this on my own, without help from other people or AI tools, and I'm OK with Nat Habit using my answers only for this hiring process.</span></label></div>
+    <div class="err" id="gerr" role="alert"></div>
+    <div><button class="btn" id="gsub" type="submit">Open the case file</button></div>
+  </form>`;
+  $("#gf").onsubmit=async e=>{
+    e.preventDefault();
+    const v=id=>$("#"+id).value.trim(); const err=m=>{$("#gerr").textContent=m;};
+    const P={name:v("g_name"),email:v("g_email"),phone:v("g_phone").replace(/\D/g,"").slice(-10)};
+    if(P.name.length<2) return err("Please add your full name.");
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(P.email)) return err("That email doesn't look right.");
+    if(!/^[6-9]\d{9}$/.test(P.phone)) return err("Please enter a valid 10-digit mobile number.");
+    if(!$("#g_ok").checked) return err("Please tick the box to continue.");
+    S.profile=P; S.invite=v("g_inv"); save();
+    const b=$("#gsub"); b.disabled=true; b.textContent="Setting up your room…";
+    try{ const j=await post({action:"start", profile:P, invite:S.invite, ua:navigator.userAgent.slice(0,120)}); if(!j.ok||!j.id) throw 0; S.id=j.id; S.t0=Date.now(); save(); go(LEVELS[0].id); }
+    catch(x){ b.disabled=false; b.textContent="Open the case file"; err("We couldn't save that just now. Check your connection and try again."); }
+  };
+}
+
+function levelIntro(lv){
+  const n=LEVELS.indexOf(lv);
+  app.innerHTML=`<div class="stack fade" style="padding-top:12px">
+    <div class="eyebrow">Level ${n} of ${LEVELS.length-1} · ${lv.tests}</div>
+    <h1 style="font-size:clamp(38px,7.5vw,60px)">${lv.name}<span class="r">.</span></h1>
+    <div class="row"><span class="chip">${lv.min} minutes</span>${n>0?'<span class="chip">Case file open any time</span>':""}</div>
+    <p style="font-size:17px;max-width:60ch">${lv.intro}</p>
+    <p class="small muted">Take a breath or a water break now if you need one. The timer starts when you press the button.</p>
+    <div><button class="btn" id="st">Start ${lv.name}</button></div>
+  </div>`;
+  $("#st").onclick=()=>{ startLevel(lv.id); ({L0:l0,L1:l1,L2:l2,L3:l3,L4:l4,L5:l5,L6:l6,L7:l7})[lv.id](); };
+}
+function shell(lv, inner){
+  app.innerHTML=`<div class="stack fade"><span class="eyebrow">${lv.name} · ${lv.tests}</span>${timerHTML}${inner}</div>`;
+}
+function next(id, fields){ endLevel(id); saveFields(fields); const i=STEPS.indexOf(id); go(STEPS[i+1]); }
+const LV = id => LEVELS.find(l=>l.id===id);
+
+/* L0 Brief */
+function l0(){
+  const lv=LV("L0");
+  shell(lv, `<div class="card">${DOSSIER}</div>
+    <div class="card stack"><label class="f">In one line, what is the single biggest thing that could stop this launch hitting ₹18 Cr?<input id="b1" type="text" maxlength="160" value="${esc(S.a.b1||"")}" autocomplete="off"></label>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="fin">I've got the picture</button></div></div>`);
+  bindText(["b1"]);
+  const end=()=>next("L0",{"L0 Biggest risk":S.a.b1||""});
+  $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
+}
+
+/* L1 Find the itch */
+function l1(){
+  const lv=LV("L1");
+  shell(lv, `<div class="card stack">
+    <div class="q">Who is this shampoo for, and what does it promise them? Use the case file (sections 4 to 6).</div>
+    <label class="f">1. Who exactly is it for? Be specific about the person and the moment.${ta("i_who",3,40,"e.g. age, life, when the dandruff bothers them")}</label>
+    <label class="f">2. The problem, in their words. What are they really frustrated about?${ta("i_prob",3,40)}</label>
+    <label class="f">3. The promise, and why they should believe it.${ta("i_prom",4,60)}</label>
+    <div class="grid2">
+      <label class="f">Front of pack, line 1 <span class="hint">Max 40 characters</span><input id="i_fop1" type="text" maxlength="40" autocomplete="off" value="${esc(S.a.i_fop1||"")}"></label>
+      <label class="f">Front of pack, line 2 <span class="hint">Max 40 characters</span><input id="i_fop2" type="text" maxlength="40" autocomplete="off" value="${esc(S.a.i_fop2||"")}"></label>
+    </div>
+    <label class="f"><span>4. One claim you would <i>not</i> put on the pack yet, and why.</span>${ta("i_no",2,30)}</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
+  [["i_who",40],["i_prob",40],["i_prom",60],["i_no",30]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m));
+  bindText(["i_who","i_prob","i_prom","i_fop1","i_fop2","i_no"]);
+  const end=()=>next("L1",{"L1 Who it's for":S.a.i_who||"","L1 Problem":S.a.i_prob||"","L1 Promise & proof":S.a.i_prom||"","L1 Front of pack":`${S.a.i_fop1||""} | ${S.a.i_fop2||""}`,"L1 Claim held back":S.a.i_no||""});
+  $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
+}
+
+/* L2 Price it */
+function l2(){
+  const lv=LV("L2");
+  shell(lv, `<div class="card stack">
+    <div class="q">Set your prices, then check the maths. Product cost before GST: 180 ml ₹48, 340 ml ₹78. GST 18%. Gross margin must stay at 60% or more online.</div>
+    <div class="grid2">
+      <label class="f">MRP for 180 ml (₹)${inp("p_s","text",'inputmode="decimal"')}</label>
+      <label class="f">MRP for 340 ml (₹)${inp("p_l","text",'inputmode="decimal"')}</label>
+    </div>
+    <label class="f">Why these prices? Think about competitors and what people will pay.${ta("p_why",3,50)}</label>
+    <div class="card stack" style="background:var(--panel2)">
+      <b>Your 340 ml on Amazon at the usual 20% off</b>
+      <div class="grid2">
+        <label class="f">Selling price (₹)${inp("p_sp","text",'inputmode="decimal"')}</label>
+        <label class="f">Selling price without GST (₹)${inp("p_net","text",'inputmode="decimal"')}</label>
+        <label class="f">Gross margin (%)${inp("p_gm","text",'inputmode="decimal"')}</label>
+        <label class="f">Deepest discount on 340 ml that keeps gross margin at 60% (%)${inp("p_max","text",'inputmode="decimal"')}</label>
+      </div>
+      <label class="f">Show your working in a line or two${ta("p_work",3,50)}</label>
+    </div>
+    <label class="f">Price for a 2 × 340 ml pack on your website (₹), and why that number${ta("p_2pk",2,40,"₹… because…")}</label>
+    <label class="f">Launch offer, if any. What, where, for how long, and why?${ta("p_offer",3,50)}</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
+  [["p_why",50],["p_work",50],["p_2pk",40],["p_offer",50]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m));
+  bindText(["p_s","p_l","p_why","p_sp","p_net","p_gm","p_max","p_work","p_2pk","p_offer"]);
+  const end=()=>{ const ck=priceCheck(); next("L2",{"L2 MRP 180ml":S.a.p_s||"","L2 MRP 340ml":S.a.p_l||"","L2 Why these prices":S.a.p_why||"","L2 Amazon maths (SP / net / GM / max disc)":`${S.a.p_sp||"–"} / ${S.a.p_net||"–"} / ${S.a.p_gm||"–"}% / ${S.a.p_max||"–"}%`,"L2 Working":S.a.p_work||"","L2 2-pack price":S.a.p_2pk||"","L2 Launch offer":S.a.p_offer||"","L2 Auto-check":ck}); };
+  $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
+}
+function priceCheck(){
+  const m=num(S.a.p_l); if(!m) return "No 340 ml MRP given";
+  const sp=m*0.8, net=sp/(1+GST), gm=(net-COST.l)/net, maxd=1-(COST.l/(1-GM_FLOOR))*(1+GST)/m;
+  const ok=(given,exp,tol)=>{const g=num(given); if(g==null) return "blank"; return Math.abs(g-exp)<=tol?"ok":"off";};
+  const ms=num(S.a.p_s), gmS = ms ? ((ms*0.8/(1+GST))-COST.s)/(ms*0.8/(1+GST)) : null;
+  return `Expected at MRP ₹${m}: SP ${inr(sp)} (${ok(S.a.p_sp,sp,2)}), net ${inr(net)} (${ok(S.a.p_net,net,2)}), GM ${pct(gm)} (${ok(S.a.p_gm,gm*100,2)}), max discount ${pct(maxd)} (${ok(S.a.p_max,maxd*100,2)}).${gmS!=null?` 180 ml GM at 20% off: ${pct(gmS)}${gmS<GM_FLOOR?" (below 60% floor)":""}.`:""}`;
+}
+
+/* L3 Plan the year */
+function l3(){
+  const lv=LV("L3");
+  const plan=S.a.plan||(S.a.plan={}); const mk=S.a.mk||(S.a.mk={});
+  const months=["Month 1","Month 2","Month 3","Month 6","Not in year 1"];
+  shell(lv, `<div class="card stack">
+    <div class="q">Spread the ₹18 Cr (1,800 lakh) year 1 goal across channels, and decide when each one goes live.</div>
+    <div class="tbl plan"><table><thead><tr><th>Channel</th><th>Goes live</th><th>Year 1 sales (₹ lakh)</th></tr></thead><tbody>
+      ${CHANNELS.map(c=>`<tr><td>${c.n}</td><td data-l="Goes live"><select id="m_${c.k}">${months.map(m=>`<option ${((plan[c.k]||{}).m||"Month 1")===m?"selected":""}>${m}</option>`).join("")}</select></td><td data-l="₹ lakh"><input id="v_${c.k}" type="number" min="0" inputmode="decimal" value="${esc((plan[c.k]||{}).v??"")}"></td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="sum" id="psum"></div>
+    <div class="q" style="margin-top:6px">Now split the first 3 months of marketing: ₹1.2 Cr (120 lakh).</div>
+    <div class="tbl plan"><table><thead><tr><th>Where</th><th>₹ lakh</th></tr></thead><tbody>
+      ${MKT.map(x=>`<tr><td>${x.n}</td><td data-l="₹ lakh"><input id="k_${x.k}" type="number" min="0" inputmode="decimal" value="${esc(mk[x.k]??"")}"></td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="sum" id="msum"></div>
+    <label class="f">Why this order of launch, and this split? What are you betting on?${ta("c_why",5,100)}</label>
+    <label class="f">How many bottles a month do you expect to sell by month 3, all channels? Show a quick working.${ta("c_units",3,50,"e.g. 25,000 a month because…")}</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
+  const upd=()=>{
+    let t=0; CHANNELS.forEach(c=>{ const v=num($("#v_"+c.k).value); plan[c.k]={m:$("#m_"+c.k).value, v:v}; t+=v||0; });
+    const ps=$("#psum"); ps.innerHTML=`<span>Total</span><span>${t.toLocaleString("en-IN")} of 1,800 lakh</span>`; ps.className="sum "+(Math.abs(t-TARGET_L)<1?"good":t>0?"bad":"");
+    let m=0; MKT.forEach(x=>{ const v=num($("#k_"+x.k).value); mk[x.k]=v; m+=v||0; });
+    const ms=$("#msum"); ms.innerHTML=`<span>Total</span><span>${m.toLocaleString("en-IN")} of 120 lakh</span>`; ms.className="sum "+(Math.abs(m-MKT_L)<0.5?"good":m>0?"bad":"");
+    save();
+  };
+  app.querySelectorAll("select,input[type=number]").forEach(el=>el.addEventListener("input",upd)); upd();
+  [["c_why",100],["c_units",50]].forEach(([id,mx])=>wc($("#"+id),$("#"+id+"_w"),mx)); bindText(["c_why","c_units"]);
+  const end=()=>{ upd();
+    const pt=CHANNELS.reduce((a,c)=>a+((plan[c.k]||{}).v||0),0), mt=MKT.reduce((a,x)=>a+(mk[x.k]||0),0);
+    next("L3",{"L3 Channel plan":CHANNELS.map(c=>`${c.n}: ${(plan[c.k]||{}).v??"–"}L, ${(plan[c.k]||{}).m||"–"}`).join("\n"),"L3 Plan total (L)":pt,"L3 Marketing split":MKT.map(x=>`${x.n}: ${mk[x.k]??"–"}L`).join("\n")+`\nTotal: ${mt}L`,"L3 Why":S.a.c_why||"","L3 Month-3 bottles":S.a.c_units||""}); };
+  $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
+}
+
+/* L4 Run the launch */
+function l4(){
+  const lv=LV("L4");
+  const sch=S.a.sch||(S.a.sch={});
+  shell(lv, `<div class="card stack">
+    <div class="q">Launch day is W0, 12 weeks away. For each task, pick who owns it and the week it is <i>done</i>. The case file (section 9) has the lead times.</div>
+    ${TASKS.map(t=>`<div class="task"><div><b>${t.t}</b><span>${t.d}</span></div>
+      <select id="o_${t.k}" aria-label="Owner for ${esc(t.t)}"><option value="">Owner…</option>${OWNERS.map(o=>`<option ${(sch[t.k]||{}).o===o?"selected":""}>${o}</option>`).join("")}</select>
+      <select id="w_${t.k}" aria-label="Week done for ${esc(t.t)}"><option value="">Week…</option>${WEEKS.map(w=>`<option ${(sch[t.k]||{}).w===w?"selected":""}>${w}</option>`).join("")}</select></div>`).join("")}
+    <label class="f"><span>The two biggest risks to launching on W0, and what you would do about each <b>this week</b>.</span>${ta("x_risk",5,100)}</label>
+    <label class="f">The one thing you would personally chase every single day until launch, and why.${ta("x_chase",2,40)}</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
+  const upd=()=>{ TASKS.forEach(t=>{ sch[t.k]={o:$("#o_"+t.k).value, w:$("#w_"+t.k).value}; }); save(); };
+  app.querySelectorAll(".task select").forEach(el=>el.addEventListener("change",upd));
+  [["x_risk",100],["x_chase",40]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m)); bindText(["x_risk","x_chase"]);
+  const end=()=>{ upd(); next("L4",{"L4 Schedule":TASKS.map(t=>`${t.t}: ${(sch[t.k]||{}).o||"–"}, ${(sch[t.k]||{}).w||"–"}`).join("\n"),"L4 Risks":S.a.x_risk||"","L4 Daily chase":S.a.x_chase||"","L4 Auto-check":scheduleCheck()}); };
+  $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
+}
+function scheduleCheck(){
+  const sch=S.a.sch||{}; const w=k=>{const v=(sch[k]||{}).w; if(!v) return null; const m=v.match(/W([+-]?\d+)/); return m?parseInt(m[1],10):null;};
+  const issues=[]; const W={}; TASKS.forEach(t=>W[t.k]=w(t.k));
+  const blank=TASKS.filter(t=>W[t.k]==null).length; if(blank) issues.push(`${blank} task(s) without a week`);
+  if(W.stab!=null && W.stab<-4) issues.push("stability done before W-4 (impossible, 8 weeks from W-12)");
+  if(W.art!=null && W.pko!=null && W.art>W.pko) issues.push("packaging ordered before artwork is final");
+  if(W.pko!=null && W.pko>-10) issues.push("packaging ordered after W-10, so launch at W0 is not possible");
+  if(W.prod!=null && W.pko!=null && W.prod<W.pko+9) issues.push("production done less than 9 weeks after packaging order");
+  if(W.prod!=null && W.stab!=null && W.prod<W.stab) issues.push("production before stability sign-off");
+  if(W.stock!=null && W.prod!=null && W.stock<W.prod+1) issues.push("stock in warehouses before production + 1 week");
+  if(W.list!=null && W.price!=null && W.list<W.price) issues.push("listings live before prices approved");
+  if(W.list!=null && W.stock!=null && W.list<W.stock-1) issues.push("listings live well before stock");
+  if(W.seed!=null && W.seed>-3) issues.push("creator kits later than W-3, so no posts at launch");
+  if(W.seed!=null && W.prod!=null && W.seed<W.prod) issues.push("creator kits before first production (needs a pilot batch: did they say so?)");
+  if(W.mt!=null && W.mt<-4) issues.push("trade done before W-4 (8 weeks from W-12)");
+  if(W.stock!=null && W.stock>0) issues.push("stock lands after launch day");
+  const wrongOwner=TASKS.filter(t=>(sch[t.k]||{}).o && sch[t.k].o!==KEYOWN[t.k]).map(t=>`${t.k}: ${sch[t.k].o}`);
+  return `${issues.length? issues.length+" timing issue(s): "+issues.join("; ") : "Timing consistent"}. Owners differing from key: ${wrongOwner.length?wrongOwner.join(", "):"none"}.`;
+}
+
+/* L5 Defend it */
+function challenger(){
+  const plan=S.a.plan||{}, mk=S.a.mk||{}; const tot=CHANNELS.reduce((a,c)=>a+((plan[c.k]||{}).v||0),0)||1;
+  const sh=k=>((plan[k]||{}).v||0)/tot; const m340=num(S.a.p_l)||0; const mkt=MKT.reduce((a,x)=>a+(mk[x.k]||0),0)||1;
+  const aw=((mk.aw||0))/mkt;
+  const cands=[];
+  if(m340>=349) cands.push({score:(m340-349)/50+1, who:"Neha Arora", role:"Head of Performance Marketing", ini:"NA",
+    said:`₹${m340} for 340 ml from a brand nobody trusts for dandruff, with zero reviews? ClearCo has 4.2 stars and ten years. Drop the price by 20% or give me 40% off for launch, or my ad money just burns.`});
+  if(sh("qc")<0.15) cands.push({score:(0.15-sh("qc"))*10+1, who:"Kabir Sethi", role:"Head of Quick Commerce", ini:"KS",
+    said:`You've given quick commerce only ${Math.round(sh("qc")*100)}% of the year. It grows 10% a month, and dandruff itch is a buy-it-tonight problem. This plan is built for 2019, not for how metros buy now.`});
+  if(sh("mt")<0.25) cands.push({score:(0.25-sh("mt"))*8+1, who:"Rajeev Malhotra", role:"National Sales Head, trade", ini:"RM",
+    said:`78% of anti-dandruff shampoo is bought in shops, and you've given trade only ${Math.round(sh("mt")*100)}%. An online-only launch is a vanity launch. You will never reach ₹18 Cr from screens.`});
+  if(aw>0.4) cands.push({score:(aw-0.4)*10+1, who:"Priya Nair", role:"Finance Controller", ini:"PN",
+    said:`₹${mk.aw} lakh on awareness for a brand-new product with no reviews? Show me the payback in rupees, or I'm cutting that line in half before it goes to the founder.`});
+  if(!cands.length) cands.push({score:1, who:"Neha Arora", role:"Head of Performance Marketing", ini:"NA",
+    said:`A gentle anti-dandruff shampoo is a weak story. Everyone says gentle. Nobody searches for it, and it won't win a single click against ClearCo. Give me one sharp reason to buy or don't launch.`});
+  return cands.sort((a,b)=>b.score-a.score)[0];
+}
+function l5(){
+  const lv=LV("L5");
+  if(!S.a.boss){ S.a.boss=challenger(); save(); }
+  const b=S.a.boss, plan=S.a.plan||{};
+  const planLine=`MRP ₹${esc(S.a.p_s||"–")} / ₹${esc(S.a.p_l||"–")} · Channels: ${CHANNELS.map(c=>`${c.n} ${(plan[c.k]||{}).v??"–"}L`).join(", ")}`;
+  const boss=`<div class="boss"><div class="avatar" aria-hidden="true">${b.ini}</div><div><div class="who">${b.who}<span>${b.role} · in your launch review</span></div><div class="said">"${esc(b.said)}"</div></div></div>`;
+  if(S.l5stage!=="video"){
+    shell(lv, `${boss}<div class="myplan"><b>Your plan so far:</b> ${planLine}</div>
+      <div class="card stack"><div class="q">You have 4 minutes to prepare. Jot down your reply: what you agree with, where you push back, and the one number or fact that backs you up.</div>
+      ${ta("d_notes",6,80,"Agree: …\nPush back: …\nProof: …\nSo I propose: …")}
+      <div class="row" style="justify-content:flex-end"><button class="btn" id="fin">I'm ready to record</button></div></div>`);
+    wc($("#d_notes"),$("#d_notes_w"),80); bindText(["d_notes"]);
+    const end=()=>{ S.l5stage="video"; S.l5vStart=Date.now(); save(); l5(); };
+    $("#fin").onclick=end; timer(remain("L5n",4*60),end); return;
+  }
+  const left=remain("L5v",10*60);
+  shell(lv, `${boss}
+    <div class="card stack"><div class="q">Now record your reply on your phone: <b>30 seconds</b>, face to camera, talking to ${esc(b.who.split(" ")[0])}. No slides, no script reading.</div>
+    <ol class="steps">
+      <li><span>Record a selfie video of 30 seconds or less. Start by saying your name.</span></li>
+      <li><span>Upload it as <b>unlisted</b> on YouTube, or to Google Drive or Loom with "anyone with the link can view".</span></li>
+      <li><span>Paste the link below. This is the only box where pasting works.</span></li>
+    </ol>
+    <div class="myplan"><b>Your notes:</b><br>${esc(S.a.d_notes||"(none)").replace(/\n/g,"<br>")}</div>
+    <label class="f">Video link<input id="vid" type="url" placeholder="https://youtu.be/…  or  https://drive.google.com/…" value="${esc(S.a.vid||"")}" autocomplete="off"></label>
+    <div class="err" id="verr" role="alert"></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="fin">Submit video</button></div></div>`);
+  $("#vid").addEventListener("input",()=>{S.a.vid=$("#vid").value.trim(); save();});
+  const okUrl=u=>/^https?:\/\/(www\.)?(youtube\.com|youtu\.be|m\.youtube\.com|drive\.google\.com|loom\.com)\//i.test(u);
+  const end=(timeout)=>{ const u=($("#vid").value||"").trim();
+    if(!timeout && !okUrl(u)){ $("#verr").textContent="Please paste a YouTube, Google Drive or Loom link."; return; }
+    S.l5stage="done"; save();
+    next("L5",{"L5 Challenger":`${b.who}, ${b.role}: ${b.said}`,"L5 Prep notes":S.a.d_notes||"","L5 Video link":u||"(no link)"}); };
+  $("#fin").onclick=()=>end(false); timer(left,()=>end(true));
+}
+
+/* L6 Fire drill */
+function l6(){
+  const lv=LV("L6");
+  if(!S.a.fireOrder) S.a.fireOrder=FIRES.map(f=>f.k);
+  shell(lv, `<div class="card stack">
+    <div class="q">Week 3 after launch. Here's the dashboard (₹ lakh):</div>
+    <div class="tbl"><table><thead><tr><th>Channel</th><th>Plan</th><th>Actual</th><th>What's happening</th></tr></thead>
+    <tbody>${WEEK3.map(r=>`<tr><td>${r[0]}</td><td data-l="Plan">${r[1]}</td><td data-l="Actual">${r[2]}</td><td data-l="Note">${r[3]}</td></tr>`).join("")}</tbody></table></div>
+    <div class="q">Rank the four fires: the one you attack first goes on top.</div>
+    <div class="bets" id="fires"></div>
+    <label class="f">For your top two: the first thing you do today, who you call, and the number that tells you it's fixed.${ta("f_plan",6,120,"#1 … today I… I call… fixed when…\n#2 …")}</label>
+    <div class="alert"><b>WhatsApp from the founder:</b> "We're 25% behind. Let's run 30% off on the website and all marketplaces this weekend to catch up."</div>
+    <label class="f">Your reply to the founder. Write it the way you'd actually send it.${ta("f_reply",4,80)}</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
+  const draw=()=>{ const o=S.a.fireOrder;
+    $("#fires").innerHTML=o.map((k,i)=>{const f=FIRES.find(x=>x.k===k); return `<div class="bet"><div class="rk">${i+1}</div><div class="tx"><b>${f.t}</b><span class="muted">${f.d}</span></div><div class="mvs"><button class="mv" data-i="${i}" data-d="-1" aria-label="Move up" ${i===0?"disabled":""}>▲</button><button class="mv" data-i="${i}" data-d="1" aria-label="Move down" ${i===o.length-1?"disabled":""}>▼</button></div></div>`}).join("");
+    $("#fires").querySelectorAll(".mv").forEach(m=>m.onclick=()=>{const i=+m.dataset.i,j=i+ +m.dataset.d; [o[i],o[j]]=[o[j],o[i]]; save(); draw();});
+  };
+  draw();
+  [["f_plan",120],["f_reply",80]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m)); bindText(["f_plan","f_reply"]);
+  const end=()=>next("L6",{"L6 Fire order":S.a.fireOrder.map((k,i)=>`${i+1}. ${FIRES.find(f=>f.k===k).t}`).join("\n"),"L6 Top-two plan":S.a.f_plan||"","L6 Founder reply":S.a.f_reply||""});
+  $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
+}
+
+/* L7 Day 30 */
+function l7(){
+  const lv=LV("L7");
+  shell(lv, `<div class="card stack">
+    <div class="q">Month 1 is done. Plan against actual:</div>
+    <div class="tbl pl"><table><thead><tr><th>Line</th><th>Plan</th><th>Actual</th></tr></thead>
+    <tbody>${PL.map(r=>`<tr><td>${r[0]}</td><td data-l="Plan">${r[1]}</td><td data-l="Actual">${r[2]}</td></tr>`).join("")}</tbody></table></div>
+    <label class="f">TL;DR for the founder: what happened, in two lines.${ta("r_tldr",3,50)}</label>
+    <label class="f">One gross margin lever, with a rough ₹ impact per month.${ta("r_gm",3,50)}</label>
+    <label class="f">Your three actions for month 2, each with an owner.${ta("r_next",4,70,"1. … (owner)\n2. …\n3. …")}</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="fin">Submit and finish</button></div></div>`);
+  [["r_tldr",50],["r_gm",50],["r_next",70]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m)); bindText(["r_tldr","r_gm","r_next"]);
+  const end=()=>{ endLevel("L7"); S.step="done"; save(); render(); };
+  $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
+}
+
+/* ======= FINISH ======= */
+function charsTyped(){
+  const a=S.a; const skip=new Set(["vid","plan","mk","sch","boss","fireOrder"]);
+  return Object.keys(a).filter(k=>!skip.has(k)&&typeof a[k]==="string").map(k=>a[k]).join("").replace(/\s/g,"").length;
+}
+function finalFields(){
+  const a=S.a;
+  return {"L7 TL;DR":a.r_tldr||"","L7 GM lever":a.r_gm||"","L7 Month-2 actions":a.r_next||"",
+    "Total minutes":S.t0?Math.round((Date.now()-S.t0)/60000):0,
+    "Minutes per level":LEVELS.map(l=>`${l.id} ${S.lvT[l.id]!=null?Math.round(S.lvT[l.id]/6)/10:"–"}/${l.min}`).join(", "),
+    "Tab switches":S.tabs,"Paste attempts":S.pastes,"Reloads":S.reloads,"Case file opens":S.dossierOpens||0,
+    "Keys vs chars":`${S.keys||0} keys / ${charsTyped()} chars`};
+}
+function done(){
+  hud();
+  const mins=S.t0?Math.round((Date.now()-S.t0)/60000):0;
+  app.innerHTML=`<div class="stack fade" style="padding-top:12px">
+    <div class="eyebrow">Launch complete</div>
+    <h2 style="font-size:clamp(30px,6vw,44px)">That's a wrap, <span class="r">${esc((S.profile.name||"").split(" ")[0]||"friend")}</span>.</h2>
+    <div class="stats"><div class="stat"><b>${LEVELS.length}/${LEVELS.length}</b><span>levels done</span></div><div class="stat"><b>${mins}m</b><span>time taken</span></div><div class="stat"><b>${S.a.vid?"1":"0"}</b><span>video sent</span></div></div>
+    <div class="card" id="sv"><p style="margin:0" class="muted" id="svt">Saving your answers…</p></div>
+    <div class="card stack small"><h3>What happens next</h3><p class="muted" style="margin:0">Tanu reads every answer and watches every video. If we move ahead, the next conversation starts from your plan here, so remember why you made each call.</p></div>
+  </div>`;
+  if(S.sent){ $("#svt").textContent="Your answers are in. Thank you for your time."; return; }
+  const trySend=async()=>{
+    $("#svt").textContent="Saving your answers…";
+    try{const j=await post({action:"finish", id:S.id, fields:finalFields()}); if(!j.ok) throw 0; S.sent=true; save(); $("#svt").textContent="Your answers are in. Thank you for your time.";}
+    catch(e){ $("#sv").innerHTML=`<p class="muted" style="margin:0 0 10px">We couldn't save your answers yet. They're kept on this device, so nothing is lost.</p><button class="btn" id="rt">Try again</button>`; $("#rt").onclick=()=>{ $("#sv").innerHTML='<p style="margin:0" class="muted" id="svt"></p>'; trySend(); }; }
+  };
+  trySend();
+}
+
+/* ======= BOOT ======= */
+(function boot(){
+  if(S.levelLive){ S.reloads++; S.levelLive=false; save(); }
+  render();
+})();
+</script>
+</body>
+</html>
