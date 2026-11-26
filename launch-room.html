@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>The Launch Room · Nat Habit</title>
-<meta name="description" content="Round 3 assignment for the Sr Category Growth Associate role at Nat Habit. Take one product from idea to day 30 in about 75 minutes.">
+<meta name="description" content="Round 3 assignment for the Sr Category Growth Associate role at Nat Habit. Take one product from idea to day 30 in about 1 hour 45 minutes.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -203,13 +203,13 @@ const KEY = "nh_launchroom_v2";
 
 /* ======= CASE DATA ======= */
 const COST = {s:48, l:78};          // product cost per bottle before GST: 180 ml, 340 ml
-const GST = 0.18, GM_FLOOR = 0.60, TARGET_L = 1800, MKT_L = 120;
+const GST = 0.05, GM_FLOOR = 0.60, TARGET_L = 1800, MKT_L = 120;
 const CHANNELS = [
-  {k:"web", n:"Own website", share:"15%", disc:"15%", cost:"₹45 shipping and payment per order (orders average ₹520)", note:"You own the customer data. 30% reorder within 90 days."},
+  {k:"web", n:"Own website", share:"15%", disc:"15%", cost:"About 9% (shipping and payment)", note:"You own the customer. 30% buy again within 3 months."},
   {k:"amz", n:"Amazon", share:"30%", disc:"20%", cost:"18% of selling price", note:"Ratings and reviews make or break a new launch here."},
-  {k:"fk",  n:"Flipkart", share:"10%", disc:"25% (cap 28%)", cost:"16% of selling price", note:"Third-party sellers often discount deeper than the cap."},
-  {k:"qc",  n:"Quick commerce", share:"15%", disc:"10%", cost:"25% of selling price, plus ₹1.5 lakh listing fee per city", note:"Growing 10% a month, top 6 metros."},
-  {k:"mt",  n:"Modern & general trade", share:"30%", disc:"0%", cost:"Retailer 28% + distributor 8% margin. ₹40 lakh to get into 500 key stores", note:"Slow to build, biggest reach."}
+  {k:"fk",  n:"Flipkart", share:"10%", disc:"25%", cost:"16% of selling price", note:"Some sellers discount deeper than you want."},
+  {k:"qc",  n:"Quick commerce", share:"15%", disc:"10%", cost:"25% of selling price", note:"Growing fast in the big cities."},
+  {k:"mt",  n:"Modern & general trade", share:"30%", disc:"0%", cost:"36% (shop + distributor margins)", note:"Biggest reach, but takes 8 weeks to set up."}
 ];
 const MKT = [
   {k:"aw", n:"Meta and YouTube awareness"},
@@ -260,96 +260,90 @@ const PL = [
 ];
 
 const LEVELS = [
-  {id:"L0", name:"The Brief", min:6,  tests:"Reading a business fast", intro:"Read the case file for one product launch. It stays open to you for the whole game through the Case file button at the top, so skim for the big picture now."},
-  {id:"L1", name:"Find the Itch", min:9, tests:"Consumer insight", intro:"Use the reviews, search trends and competitor gaps to decide who this shampoo is for and what it promises."},
-  {id:"L2", name:"Price It", min:10, tests:"Unit economics", intro:"Set the MRPs and check your margins. Keep a calculator handy (your phone is fine). Show the numbers, not just the answer."},
-  {id:"L3", name:"Plan the Year", min:10, tests:"Channel planning", intro:"Spread the ₹18 Cr goal across channels, and decide what launches when."},
-  {id:"L4", name:"Run the Launch", min:9, tests:"Execution", intro:"Nine things have to happen before launch day. Give each an owner and a week, then name what could break."},
-  {id:"L5", name:"Defend It", min:10, tests:"Conviction and communication", intro:"Someone senior is about to pick a fight with your plan. You get 3 minutes to prepare, then you record a 30-second video reply on your phone."},
-  {id:"L6", name:"Fire Drill", min:11, tests:"Problem solving", intro:"It's week 3 after launch and several things are going wrong at once. Decide what you fix first and reply to the founder."},
-  {id:"L7", name:"Day 30", min:8, tests:"Reading a P&L", intro:"Month 1 numbers are in. Write the readout you would send the founder."}
+  {id:"L0", name:"The Brief", min:8,  tests:"Reading a business fast", intro:"Read the case file for one product launch. It stays open to you for the whole game through the Case file button at the top, so skim for the big picture now."},
+  {id:"L1", name:"Find the Itch", min:12, tests:"Consumer insight", intro:"Use the reviews, search trends and competitor gaps to decide who this shampoo is for and what it promises."},
+  {id:"L2", name:"Price It", min:15, tests:"Unit economics", intro:"Set the MRPs and check your margins. Keep a calculator handy (your phone is fine). Show the numbers, not just the answer."},
+  {id:"L3", name:"Plan the Year", min:15, tests:"Channel planning", intro:"Spread the ₹18 Cr goal across channels, and decide what launches when."},
+  {id:"L4", name:"Run the Launch", min:14, tests:"Execution", intro:"Nine things have to happen before launch day. Give each an owner and a week, then name what could break."},
+  {id:"L5", name:"Defend It", min:14, tests:"Conviction and communication", intro:"Someone senior is about to pick a fight with your plan. You get 4 minutes to prepare, then you record a 30-second video reply on your phone."},
+  {id:"L6", name:"Fire Drill", min:15, tests:"Problem solving", intro:"It's week 3 after launch and several things are going wrong at once. Decide what you fix first and reply to the founder."},
+  {id:"L7", name:"Day 30", min:10, tests:"Reading a P&L", intro:"Month 1 numbers are in. Write the readout you would send the founder."}
 ];
 const totalMin = LEVELS.reduce((a,l)=>a+l.min,0);
 
 const DOSSIER = `
 <div class="eyebrow">Case file</div>
 <h2>Brightwell Anti-Dandruff <span class="r">Shampoo.</span></h2>
-<p class="muted small">A made-up brand and made-up numbers. Everything you need is on this page.</p>
+<p class="muted small">A made-up brand with made-up numbers. Everything you need is on this page, and it stays open to you all game.</p>
 
 <h3>1. The brand</h3>
 <ul>
-<li>Brightwell is a mass personal care brand doing ₹300 Cr a year. Hair care is ₹90 Cr of that.</li>
-<li>Its hero product is <b>Daily Shine shampoo</b>: 340 ml, MRP ₹249, about 1.2 lakh bottles a month.</li>
-<li>It sells on its own website, Amazon, Flipkart, quick commerce, and 6,000 modern and general trade stores through distributors.</li>
+<li>Brightwell is a personal care brand doing ₹300 Cr a year. Its best seller is <b>Daily Shine shampoo</b> (340 ml, MRP ₹249).</li>
+<li>It sells on its own website, Amazon, Flipkart, quick commerce (Blinkit, Zepto, Instamart) and in shops.</li>
 </ul>
 
 <h3>2. The new product</h3>
 <ul>
-<li>An anti-dandruff shampoo: piroctone olamine (the anti-dandruff active) with tea tree and aloe. Gentle enough to use 3 to 4 times a week.</li>
-<li>In-house test, 30 people, 4 weeks: visible flakes down 68%, and 80% said their hair felt as soft as with a normal shampoo.</li>
-<li>Not dermatologist-tested yet. An external test costs ₹6 lakh and takes 6 weeks.</li>
-<li>Two packs: <b>180 ml</b> and <b>340 ml</b>. No name yet; the working name is Brightwell Anti-Dandruff.</li>
+<li>A gentle anti-dandruff shampoo with tea tree and aloe, mild enough to use 3 to 4 times a week.</li>
+<li>Small in-house test, 30 people, 4 weeks: flakes down 68%, and 80% said their hair felt as soft as with a normal shampoo.</li>
+<li>Not dermatologist-tested yet.</li>
+<li>Two sizes: <b>180 ml</b> and <b>340 ml</b>.</li>
 </ul>
 
-<h3>3. Year 1 goals</h3>
+<h3>3. The goal for year 1</h3>
 <ul>
-<li><b>₹18 Cr</b> gross sales (at selling price, including GST).</li>
-<li>Gross margin of <b>at least 60%</b> on every online channel.</li>
-<li>Marketing: <b>₹1.2 Cr for the first 3 months</b>, ₹3 Cr for the year.</li>
-<li>Daily Shine must not lose more than 10% of its sales.</li>
+<li>Sell <b>₹18 Cr</b> (1,800 lakh) at selling price.</li>
+<li>Keep gross margin at <b>60% or more</b> online.</li>
+<li>Marketing budget: <b>₹1.2 Cr</b> for the first 3 months.</li>
+<li>Don't hurt Daily Shine by more than 10%.</li>
 </ul>
 
 <h3>4. The market</h3>
 <ul>
-<li>Anti-dandruff shampoo in India is a ₹3,500 Cr market, growing 9% a year.</li>
-<li>78% is sold offline. Online is 22% but growing 25% a year. In the metros, quick commerce is 30% of online anti-dandruff sales.</li>
-<li>Searches for "dandruff itchy scalp" jump about 40% from June to September. "Anti dandruff shampoo for dry hair" is up 65% on last year. "Dandruff shampoo for women" is up 30%.</li>
+<li>Most anti-dandruff shampoo (about 78%) is still bought in shops. Online is smaller but growing fast, and quick commerce is big in the metros.</li>
+<li>Dandruff searches jump every monsoon (June to September).</li>
 </ul>
 
 <h3>5. Competitors</h3>
 <div class="tbl"><table>
-<thead><tr><th>Brand</th><th>Pack</th><th>MRP</th><th>Rating</th><th>What 1★ reviews say</th></tr></thead>
+<thead><tr><th>Brand</th><th>Pack</th><th>MRP</th><th>Rating</th><th>What unhappy buyers say</th></tr></thead>
 <tbody>
-<tr><td>ClearCo AD</td><td data-l="Pack">340 ml</td><td data-l="MRP">₹399</td><td data-l="Rating">4.2★</td><td data-l="1★ reviews">"Hair feels like straw", strong smell</td></tr>
-<tr><td>HeadFresh</td><td data-l="Pack">180 ml</td><td data-l="MRP">₹199</td><td data-l="Rating">4.0★</td><td data-l="1★ reviews">"Dandruff back in 2 weeks"</td></tr>
-<tr><td>Scalpwise Derm</td><td data-l="Pack">100 ml</td><td data-l="MRP">₹549</td><td data-l="Rating">4.4★</td><td data-l="1★ reviews">"Works, but too expensive to use often"</td></tr>
-<tr><td>Herba Neem AD</td><td data-l="Pack">200 ml</td><td data-l="MRP">₹245</td><td data-l="Rating">3.9★</td><td data-l="1★ reviews">"Doesn't lather, didn't work"</td></tr>
+<tr><td>ClearCo</td><td data-l="Pack">340 ml</td><td data-l="MRP">₹399</td><td data-l="Rating">4.2★</td><td data-l="Complaint">"Hair feels like straw", strong smell</td></tr>
+<tr><td>HeadFresh</td><td data-l="Pack">180 ml</td><td data-l="MRP">₹199</td><td data-l="Rating">4.0★</td><td data-l="Complaint">"Dandruff back in 2 weeks"</td></tr>
+<tr><td>Scalpwise Derm</td><td data-l="Pack">100 ml</td><td data-l="MRP">₹549</td><td data-l="Rating">4.4★</td><td data-l="Complaint">"Works, but too expensive to use often"</td></tr>
 </tbody></table></div>
 
 <h3>6. What people say</h3>
 <div class="qgrid">
-<div class="quote">"I ride with a helmet all day. My scalp itches by 4 pm."<span>Amazon review, man, 27</span></div>
-<div class="quote">"Flakes show up on every black kurti. So embarrassing in meetings."<span>Instagram comment</span></div>
+<div class="quote">"I ride with a helmet all day. My scalp itches by 4 pm."<span>Amazon review</span></div>
+<div class="quote">"Flakes show up on every black kurti. So embarrassing."<span>Instagram comment</span></div>
 <div class="quote">"Anti-dandruff shampoos dry my hair, so I switch back to my normal one. Then the dandruff comes back."<span>Amazon review</span></div>
-<div class="quote">"It works while I use it. Stop for a week and it's back."<span>Flipkart review</span></div>
 <div class="quote">"The medicine smell stays on my pillow."<span>Amazon review</span></div>
 <div class="quote">"The derm one worked, but ₹549 for 100 ml? Not every week."<span>Reddit</span></div>
-<div class="quote">"Tried curd and lemon. Messy, and it didn't last."<span>YouTube comment</span></div>
 <div class="quote">"I go to the gym twice a day. Sweat makes it worse."<span>Amazon review</span></div>
-<div class="quote">"My husband and I share one bottle. It's gone in 10 days."<span>Flipkart review</span></div>
 <div class="quote">"Monsoon means dandruff season for me. Every single year."<span>Instagram comment</span></div>
-<div class="quote">"The hard water in my PG makes my scalp flaky."<span>Amazon review</span></div>
-<div class="quote">"I don't want my hair smelling like a hospital."<span>Amazon review</span></div>
+<div class="quote">"My husband and I share one bottle. It's gone in 10 days."<span>Flipkart review</span></div>
 </div>
 
-<h3>7. Product cost</h3>
+<h3>7. Cost and margin</h3>
 <ul>
-<li>Cost per bottle, before GST: <b>180 ml = ₹48</b> (formula 24, bottle and cap 14, label and box 4, filling and freight 6). <b>340 ml = ₹78</b> (formula 44, bottle and flip cap 22, label 5, filling 7).</li>
-<li>GST on shampoo is <b>18%</b>. MRP and selling prices include GST.</li>
-<li><b>Gross margin</b> = (selling price without GST − product cost) ÷ selling price without GST. Channel fees and ads are not part of gross margin.</li>
+<li>Cost to make one bottle: <b>180 ml = ₹48</b>, <b>340 ml = ₹78</b>.</li>
+<li>GST on shampoo is <b>5%</b>. MRP and selling prices include GST.</li>
+<li><b>Gross margin</b> = (selling price without GST − cost) ÷ selling price without GST.</li>
+<li>Example: Daily Shine sells at ₹210. Without GST: 210 ÷ 1.05 = ₹200. If it cost ₹60, gross margin = (200 − 60) ÷ 200 = <b>70%</b>.</li>
 </ul>
 
-<h3>8. Channels today (Brightwell hair care)</h3>
+<h3>8. Channels</h3>
 <div class="tbl"><table>
-<thead><tr><th>Channel</th><th>Share of sales</th><th>Usual discount</th><th>Channel cost</th><th>Notes</th></tr></thead>
-<tbody>${CHANNELS.map(c=>`<tr><td>${c.n}</td><td data-l="Share">${c.share}</td><td data-l="Discount">${c.disc}</td><td data-l="Channel cost">${c.cost}</td><td data-l="Notes">${c.note}</td></tr>`).join("")}</tbody>
+<thead><tr><th>Channel</th><th>Share of Brightwell sales</th><th>Usual discount</th><th>Channel cost</th><th>Good to know</th></tr></thead>
+<tbody>${CHANNELS.map(c=>`<tr><td>${c.n}</td><td data-l="Share">${c.share}</td><td data-l="Discount">${c.disc}</td><td data-l="Channel cost">${c.cost}</td><td data-l="Note">${c.note}</td></tr>`).join("")}</tbody>
 </table></div>
 
 <h3>9. Launch timing</h3>
 <ul>
-<li>Launch day is <b>W0</b>, 12 weeks from today (today is W-12). The founder wants it live before the monsoon.</li>
-<li>Stability test: 8 weeks, can start at W-12 at the earliest. Packaging: arrives 6 weeks after the order. Production: 3 weeks once packaging is in. Stock reaches warehouses 1 week after production.</li>
-<li>Creators need the product 3 weeks before they post. Trade distributor onboarding takes 8 weeks.</li>
+<li>Launch day is <b>W0</b>, 12 weeks from today (today is W-12).</li>
+<li>Safety test: 8 weeks. Packaging: arrives 6 weeks after you order it. Making the first batch: 3 weeks after packaging arrives. Then 1 week to reach warehouses.</li>
+<li>Creators need the product 3 weeks before they post. Setting up shops takes 8 weeks.</li>
 </ul>`;
 
 /* ======= STATE ======= */
@@ -455,7 +449,7 @@ function intro(){
     <div class="card stack small">
       <h3>Before you start</h3>
       <ol class="steps">
-        <li><span>Block <b>1 hour 20 minutes</b> in one sitting, on a laptop, somewhere quiet with good internet.</span></li>
+        <li><span>Block <b>1 hour 50 minutes</b> in one sitting, on a laptop, somewhere quiet with good internet.</span></li>
         <li><span>Keep your <b>phone</b> nearby: it's your calculator, and in Level 5 you'll record a 30-second video on it.</span></li>
         <li><span>Before you begin, check you can upload a video as <b>unlisted on YouTube</b>, or to <b>Google Drive or Loom</b> with "anyone with the link" access.</span></li>
         <li><span>Each level has its own timer and closes when the timer runs out. You can take a short break <i>between</i> levels.</span></li>
@@ -545,7 +539,7 @@ function l1(){
 function l2(){
   const lv=LV("L2");
   shell(lv, `<div class="card stack">
-    <div class="q">Set your prices, then check the maths. Product cost before GST: 180 ml ₹48, 340 ml ₹78. GST 18%. Gross margin must stay at 60% or more online.</div>
+    <div class="q">Set your prices, then check the maths. Product cost before GST: 180 ml ₹48, 340 ml ₹78. GST 5%. Gross margin must stay at 60% or more online.</div>
     <div class="grid2">
       <label class="f">MRP for 180 ml (₹)${inp("p_s","text",'inputmode="decimal"')}</label>
       <label class="f">MRP for 340 ml (₹)${inp("p_l","text",'inputmode="decimal"')}</label>
@@ -664,14 +658,14 @@ function l5(){
   const boss=`<div class="boss"><div class="avatar" aria-hidden="true">${b.ini}</div><div><div class="who">${b.who}<span>${b.role} · in your launch review</span></div><div class="said">"${esc(b.said)}"</div></div></div>`;
   if(S.l5stage!=="video"){
     shell(lv, `${boss}<div class="myplan"><b>Your plan so far:</b> ${planLine}</div>
-      <div class="card stack"><div class="q">You have 3 minutes to prepare. Jot down your reply: what you agree with, where you push back, and the one number or fact that backs you up.</div>
+      <div class="card stack"><div class="q">You have 4 minutes to prepare. Jot down your reply: what you agree with, where you push back, and the one number or fact that backs you up.</div>
       ${ta("d_notes",6,80,"Agree: …\nPush back: …\nProof: …\nSo I propose: …")}
       <div class="row" style="justify-content:flex-end"><button class="btn" id="fin">I'm ready to record</button></div></div>`);
     wc($("#d_notes"),$("#d_notes_w"),80); bindText(["d_notes"]);
     const end=()=>{ S.l5stage="video"; S.l5vStart=Date.now(); save(); l5(); };
-    $("#fin").onclick=end; timer(remain("L5n",3*60),end); return;
+    $("#fin").onclick=end; timer(remain("L5n",4*60),end); return;
   }
-  const left=remain("L5v",7*60);
+  const left=remain("L5v",10*60);
   shell(lv, `${boss}
     <div class="card stack"><div class="q">Now record your reply on your phone: <b>30 seconds</b>, face to camera, talking to ${esc(b.who.split(" ")[0])}. No slides, no script reading.</div>
     <ol class="steps">
