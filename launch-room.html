@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>The Launch Room · Nat Habit</title>
-<meta name="description" content="Round 2 assignment for the Sr Category Growth Associate role at Nat Habit. Take one product from idea to day 30 in about 1 hour 45 minutes.">
+<meta name="description" content="Round 3 assignment for the Sr Category Growth Associate role at Nat Habit. Take one product from idea to day 30 in about 75 minutes.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -186,7 +186,7 @@ select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 </head>
 <body>
 <div class="hud"><div class="hud-in">
-  <div class="brand">The Launch <span class="r">Room.</span><small>Nat Habit · Round 2</small></div>
+  <div class="brand">The Launch <span class="r">Room.</span><small>Nat Habit · Round 3</small></div>
   <div class="pips" id="pips" aria-hidden="true"></div>
   <button class="dossier-btn" id="dbtn" hidden>Case file</button>
   <div class="xp" id="xp"></div>
@@ -199,7 +199,7 @@ select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* ======= CONFIG ======= */
 // Paste the Apps Script web app URL here after deploying launch-room-backend.gs. Until then the game runs in demo mode.
 const API_URL = "https://script.google.com/macros/s/AKfycbyU1ZDSpdgc-N-1XpP5CsYAMb7TcI50S--AtAvA0kvOPzD5XJ11o_98ufeUu20BTSL6/exec";
-const KEY = "nh_launchroom_v1";
+const KEY = "nh_launchroom_v2";
 
 /* ======= CASE DATA ======= */
 const COST = {s:48, l:78};          // product cost per bottle before GST: 180 ml, 340 ml
@@ -230,7 +230,6 @@ const TASKS = [
   {k:"price",t:"Pricing and discount caps approved", d:"Needed before any listing goes live."},
   {k:"list", t:"Listings live on marketplaces and quick commerce", d:"Needs approved prices, final pack images and stock."},
   {k:"seed", t:"Creator kits delivered", d:"Creators need the product 3 weeks before they post."},
-  {k:"ads",  t:"Launch ad films shot", d:"Need the real bottle on camera."},
   {k:"mt",   t:"Trade distributors onboarded, stores listed", d:"Takes 8 weeks from the first meeting."}
 ];
 const KEYOWN = {stab:"R&D",art:"Packaging & design",pko:"Supply chain",prod:"Supply chain",stock:"Supply chain",price:"Finance",list:"Ecommerce team",seed:"Marketing",ads:"Marketing",mt:"Sales (trade)"};
@@ -261,14 +260,14 @@ const PL = [
 ];
 
 const LEVELS = [
-  {id:"L0", name:"The Brief", min:8,  tests:"Reading a business fast", intro:"Read the case file for one product launch. It stays open to you for the whole game through the Case file button at the top, so skim for the big picture now."},
-  {id:"L1", name:"Find the Itch", min:12, tests:"Consumer insight", intro:"Use the reviews, search trends and competitor gaps to decide who this shampoo is for and what it promises."},
-  {id:"L2", name:"Price It", min:15, tests:"Unit economics", intro:"Set the MRPs and check your margins. Keep a calculator handy (your phone is fine). Show the numbers, not just the answer."},
-  {id:"L3", name:"Plan the Year", min:15, tests:"Channel and budget planning", intro:"Spread the ₹18 Cr goal across channels, decide what launches when, and split the first ₹1.2 Cr of marketing."},
-  {id:"L4", name:"Run the Launch", min:14, tests:"Execution", intro:"Ten things have to happen before launch day. Give each an owner and a week, then name what could break."},
-  {id:"L5", name:"Defend It", min:14, tests:"Conviction and communication", intro:"Someone senior is about to pick a fight with your plan. You get 4 minutes to prepare, then you record a 30-second video reply on your phone."},
-  {id:"L6", name:"Fire Drill", min:15, tests:"Problem solving", intro:"It's week 3 after launch and several things are going wrong at once. Decide what you fix first and reply to the founder."},
-  {id:"L7", name:"Day 30", min:10, tests:"Reading a P&L", intro:"Month 1 numbers are in. Write the readout you would send the founder."}
+  {id:"L0", name:"The Brief", min:6,  tests:"Reading a business fast", intro:"Read the case file for one product launch. It stays open to you for the whole game through the Case file button at the top, so skim for the big picture now."},
+  {id:"L1", name:"Find the Itch", min:9, tests:"Consumer insight", intro:"Use the reviews, search trends and competitor gaps to decide who this shampoo is for and what it promises."},
+  {id:"L2", name:"Price It", min:10, tests:"Unit economics", intro:"Set the MRPs and check your margins. Keep a calculator handy (your phone is fine). Show the numbers, not just the answer."},
+  {id:"L3", name:"Plan the Year", min:10, tests:"Channel planning", intro:"Spread the ₹18 Cr goal across channels, and decide what launches when."},
+  {id:"L4", name:"Run the Launch", min:9, tests:"Execution", intro:"Nine things have to happen before launch day. Give each an owner and a week, then name what could break."},
+  {id:"L5", name:"Defend It", min:10, tests:"Conviction and communication", intro:"Someone senior is about to pick a fight with your plan. You get 3 minutes to prepare, then you record a 30-second video reply on your phone."},
+  {id:"L6", name:"Fire Drill", min:11, tests:"Problem solving", intro:"It's week 3 after launch and several things are going wrong at once. Decide what you fix first and reply to the founder."},
+  {id:"L7", name:"Day 30", min:8, tests:"Reading a P&L", intro:"Month 1 numbers are in. Write the readout you would send the founder."}
 ];
 const totalMin = LEVELS.reduce((a,l)=>a+l.min,0);
 
@@ -449,14 +448,14 @@ function render(){
 
 function intro(){
   app.innerHTML = `<div class="stack fade">
-    <div><div class="eyebrow">Round 2 · Sr Category Growth Associate</div>
+    <div><div class="eyebrow">Round 3 · Sr Category Growth Associate</div>
     <h1>The Launch <span class="r">Room.</span></h1>
     <p class="muted" style="font-size:18px;max-width:60ch">Take one product from a blank page to its first 30 days on shelf. Eight levels, one story, about ${Math.round(totalMin/5)*5} minutes in total. This is close to what a category owner does every week.</p></div>
     <div class="levels">${LEVELS.map((l,i)=>`<div class="lv"><span class="n">LEVEL ${i}</span><b>${l.name}</b><span class="t">${l.min} min · ${l.tests}</span></div>`).join("")}</div>
     <div class="card stack small">
       <h3>Before you start</h3>
       <ol class="steps">
-        <li><span>Block <b>1 hour 50 minutes</b> in one sitting, on a laptop, somewhere quiet with good internet.</span></li>
+        <li><span>Block <b>1 hour 20 minutes</b> in one sitting, on a laptop, somewhere quiet with good internet.</span></li>
         <li><span>Keep your <b>phone</b> nearby: it's your calculator, and in Level 5 you'll record a 30-second video on it.</span></li>
         <li><span>Before you begin, check you can upload a video as <b>unlisted on YouTube</b>, or to <b>Google Drive or Loom</b> with "anyone with the link" access.</span></li>
         <li><span>Each level has its own timer and closes when the timer runs out. You can take a short break <i>between</i> levels.</span></li>
@@ -534,15 +533,11 @@ function l1(){
     <label class="f">1. Who exactly is it for? Be specific about the person and the moment.${ta("i_who",3,40,"e.g. age, life, when the dandruff bothers them")}</label>
     <label class="f">2. The problem, in their words. What are they really frustrated about?${ta("i_prob",3,40)}</label>
     <label class="f">3. The promise, and why they should believe it.${ta("i_prom",4,60)}</label>
-    <div class="grid2">
-      <label class="f">Front of pack, line 1 <span class="hint">Max 40 characters</span><input id="i_fop1" type="text" maxlength="40" autocomplete="off" value="${esc(S.a.i_fop1||"")}"></label>
-      <label class="f">Front of pack, line 2 <span class="hint">Max 40 characters</span><input id="i_fop2" type="text" maxlength="40" autocomplete="off" value="${esc(S.a.i_fop2||"")}"></label>
-    </div>
-    <label class="f"><span>4. One claim you would <i>not</i> put on the pack yet, and why.</span>${ta("i_no",2,30)}</label>
+    <label class="f">4. The one line on the front of the pack <span class="hint">Max 40 characters</span><input id="i_fop1" type="text" maxlength="40" autocomplete="off" value="${esc(S.a.i_fop1||"")}"></label>
     <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
-  [["i_who",40],["i_prob",40],["i_prom",60],["i_no",30]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m));
-  bindText(["i_who","i_prob","i_prom","i_fop1","i_fop2","i_no"]);
-  const end=()=>next("L1",{"L1 Who it's for":S.a.i_who||"","L1 Problem":S.a.i_prob||"","L1 Promise & proof":S.a.i_prom||"","L1 Front of pack":`${S.a.i_fop1||""} | ${S.a.i_fop2||""}`,"L1 Claim held back":S.a.i_no||""});
+  [["i_who",40],["i_prob",40],["i_prom",60]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m));
+  bindText(["i_who","i_prob","i_prom","i_fop1"]);
+  const end=()=>next("L1",{"L1 Who it's for":S.a.i_who||"","L1 Problem":S.a.i_prob||"","L1 Promise & proof":S.a.i_prom||"","L1 Front of pack":S.a.i_fop1||""});
   $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
 }
 
@@ -562,16 +557,14 @@ function l2(){
         <label class="f">Selling price (₹)${inp("p_sp","text",'inputmode="decimal"')}</label>
         <label class="f">Selling price without GST (₹)${inp("p_net","text",'inputmode="decimal"')}</label>
         <label class="f">Gross margin (%)${inp("p_gm","text",'inputmode="decimal"')}</label>
-        <label class="f">Deepest discount on 340 ml that keeps gross margin at 60% (%)${inp("p_max","text",'inputmode="decimal"')}</label>
       </div>
       <label class="f">Show your working in a line or two${ta("p_work",3,50)}</label>
     </div>
-    <label class="f">Price for a 2 × 340 ml pack on your website (₹), and why that number${ta("p_2pk",2,40,"₹… because…")}</label>
     <label class="f">Launch offer, if any. What, where, for how long, and why?${ta("p_offer",3,50)}</label>
     <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
-  [["p_why",50],["p_work",50],["p_2pk",40],["p_offer",50]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m));
-  bindText(["p_s","p_l","p_why","p_sp","p_net","p_gm","p_max","p_work","p_2pk","p_offer"]);
-  const end=()=>{ const ck=priceCheck(); next("L2",{"L2 MRP 180ml":S.a.p_s||"","L2 MRP 340ml":S.a.p_l||"","L2 Why these prices":S.a.p_why||"","L2 Amazon maths (SP / net / GM / max disc)":`${S.a.p_sp||"–"} / ${S.a.p_net||"–"} / ${S.a.p_gm||"–"}% / ${S.a.p_max||"–"}%`,"L2 Working":S.a.p_work||"","L2 2-pack price":S.a.p_2pk||"","L2 Launch offer":S.a.p_offer||"","L2 Auto-check":ck}); };
+  [["p_why",50],["p_work",50],["p_offer",50]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m));
+  bindText(["p_s","p_l","p_why","p_sp","p_net","p_gm","p_work","p_offer"]);
+  const end=()=>{ const ck=priceCheck(); next("L2",{"L2 MRP 180ml":S.a.p_s||"","L2 MRP 340ml":S.a.p_l||"","L2 Why these prices":S.a.p_why||"","L2 Amazon maths (SP / net / GM / max disc)":`${S.a.p_sp||"–"} / ${S.a.p_net||"–"} / ${S.a.p_gm||"–"}%`,"L2 Working":S.a.p_work||"","L2 Launch offer":S.a.p_offer||"","L2 Auto-check":ck}); };
   $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
 }
 function priceCheck(){
@@ -579,7 +572,7 @@ function priceCheck(){
   const sp=m*0.8, net=sp/(1+GST), gm=(net-COST.l)/net, maxd=1-(COST.l/(1-GM_FLOOR))*(1+GST)/m;
   const ok=(given,exp,tol)=>{const g=num(given); if(g==null) return "blank"; return Math.abs(g-exp)<=tol?"ok":"off";};
   const ms=num(S.a.p_s), gmS = ms ? ((ms*0.8/(1+GST))-COST.s)/(ms*0.8/(1+GST)) : null;
-  return `Expected at MRP ₹${m}: SP ${inr(sp)} (${ok(S.a.p_sp,sp,2)}), net ${inr(net)} (${ok(S.a.p_net,net,2)}), GM ${pct(gm)} (${ok(S.a.p_gm,gm*100,2)}), max discount ${pct(maxd)} (${ok(S.a.p_max,maxd*100,2)}).${gmS!=null?` 180 ml GM at 20% off: ${pct(gmS)}${gmS<GM_FLOOR?" (below 60% floor)":""}.`:""}`;
+  return `Expected at MRP ₹${m}: SP ${inr(sp)} (${ok(S.a.p_sp,sp,2)}), net ${inr(net)} (${ok(S.a.p_net,net,2)}), GM ${pct(gm)} (${ok(S.a.p_gm,gm*100,2)}).${gmS!=null?` 180 ml GM at 20% off: ${pct(gmS)}${gmS<GM_FLOOR?" (below 60% floor)":""}.`:""}`;
 }
 
 /* L3 Plan the year */
@@ -593,26 +586,18 @@ function l3(){
       ${CHANNELS.map(c=>`<tr><td>${c.n}</td><td data-l="Goes live"><select id="m_${c.k}">${months.map(m=>`<option ${((plan[c.k]||{}).m||"Month 1")===m?"selected":""}>${m}</option>`).join("")}</select></td><td data-l="₹ lakh"><input id="v_${c.k}" type="number" min="0" inputmode="decimal" value="${esc((plan[c.k]||{}).v??"")}"></td></tr>`).join("")}
     </tbody></table></div>
     <div class="sum" id="psum"></div>
-    <div class="q" style="margin-top:6px">Now split the first 3 months of marketing: ₹1.2 Cr (120 lakh).</div>
-    <div class="tbl plan"><table><thead><tr><th>Where</th><th>₹ lakh</th></tr></thead><tbody>
-      ${MKT.map(x=>`<tr><td>${x.n}</td><td data-l="₹ lakh"><input id="k_${x.k}" type="number" min="0" inputmode="decimal" value="${esc(mk[x.k]??"")}"></td></tr>`).join("")}
-    </tbody></table></div>
-    <div class="sum" id="msum"></div>
     <label class="f">Why this order of launch, and this split? What are you betting on?${ta("c_why",5,100)}</label>
-    <label class="f">How many bottles a month do you expect to sell by month 3, all channels? Show a quick working.${ta("c_units",3,50,"e.g. 25,000 a month because…")}</label>
     <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
   const upd=()=>{
     let t=0; CHANNELS.forEach(c=>{ const v=num($("#v_"+c.k).value); plan[c.k]={m:$("#m_"+c.k).value, v:v}; t+=v||0; });
     const ps=$("#psum"); ps.innerHTML=`<span>Total</span><span>${t.toLocaleString("en-IN")} of 1,800 lakh</span>`; ps.className="sum "+(Math.abs(t-TARGET_L)<1?"good":t>0?"bad":"");
-    let m=0; MKT.forEach(x=>{ const v=num($("#k_"+x.k).value); mk[x.k]=v; m+=v||0; });
-    const ms=$("#msum"); ms.innerHTML=`<span>Total</span><span>${m.toLocaleString("en-IN")} of 120 lakh</span>`; ms.className="sum "+(Math.abs(m-MKT_L)<0.5?"good":m>0?"bad":"");
     save();
   };
   app.querySelectorAll("select,input[type=number]").forEach(el=>el.addEventListener("input",upd)); upd();
-  [["c_why",100],["c_units",50]].forEach(([id,mx])=>wc($("#"+id),$("#"+id+"_w"),mx)); bindText(["c_why","c_units"]);
+  wc($("#c_why"),$("#c_why_w"),100); bindText(["c_why"]);
   const end=()=>{ upd();
     const pt=CHANNELS.reduce((a,c)=>a+((plan[c.k]||{}).v||0),0), mt=MKT.reduce((a,x)=>a+(mk[x.k]||0),0);
-    next("L3",{"L3 Channel plan":CHANNELS.map(c=>`${c.n}: ${(plan[c.k]||{}).v??"–"}L, ${(plan[c.k]||{}).m||"–"}`).join("\n"),"L3 Plan total (L)":pt,"L3 Marketing split":MKT.map(x=>`${x.n}: ${mk[x.k]??"–"}L`).join("\n")+`\nTotal: ${mt}L`,"L3 Why":S.a.c_why||"","L3 Month-3 bottles":S.a.c_units||""}); };
+    next("L3",{"L3 Channel plan":CHANNELS.map(c=>`${c.n}: ${(plan[c.k]||{}).v??"–"}L, ${(plan[c.k]||{}).m||"–"}`).join("\n"),"L3 Plan total (L)":pt,"L3 Why":S.a.c_why||""}); };
   $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
 }
 
@@ -625,13 +610,12 @@ function l4(){
     ${TASKS.map(t=>`<div class="task"><div><b>${t.t}</b><span>${t.d}</span></div>
       <select id="o_${t.k}" aria-label="Owner for ${esc(t.t)}"><option value="">Owner…</option>${OWNERS.map(o=>`<option ${(sch[t.k]||{}).o===o?"selected":""}>${o}</option>`).join("")}</select>
       <select id="w_${t.k}" aria-label="Week done for ${esc(t.t)}"><option value="">Week…</option>${WEEKS.map(w=>`<option ${(sch[t.k]||{}).w===w?"selected":""}>${w}</option>`).join("")}</select></div>`).join("")}
-    <label class="f"><span>The two biggest risks to launching on W0, and what you would do about each <b>this week</b>.</span>${ta("x_risk",5,100)}</label>
-    <label class="f">The one thing you would personally chase every single day until launch, and why.${ta("x_chase",2,40)}</label>
+    <label class="f"><span>The biggest risk to launching on W0, and what you would do about it <b>this week</b>.</span>${ta("x_risk",4,70)}</label>
     <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
   const upd=()=>{ TASKS.forEach(t=>{ sch[t.k]={o:$("#o_"+t.k).value, w:$("#w_"+t.k).value}; }); save(); };
   app.querySelectorAll(".task select").forEach(el=>el.addEventListener("change",upd));
-  [["x_risk",100],["x_chase",40]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m)); bindText(["x_risk","x_chase"]);
-  const end=()=>{ upd(); next("L4",{"L4 Schedule":TASKS.map(t=>`${t.t}: ${(sch[t.k]||{}).o||"–"}, ${(sch[t.k]||{}).w||"–"}`).join("\n"),"L4 Risks":S.a.x_risk||"","L4 Daily chase":S.a.x_chase||"","L4 Auto-check":scheduleCheck()}); };
+  wc($("#x_risk"),$("#x_risk_w"),70); bindText(["x_risk"]);
+  const end=()=>{ upd(); next("L4",{"L4 Schedule":TASKS.map(t=>`${t.t}: ${(sch[t.k]||{}).o||"–"}, ${(sch[t.k]||{}).w||"–"}`).join("\n"),"L4 Risks":S.a.x_risk||"","L4 Auto-check":scheduleCheck()}); };
   $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
 }
 function scheduleCheck(){
@@ -680,14 +664,14 @@ function l5(){
   const boss=`<div class="boss"><div class="avatar" aria-hidden="true">${b.ini}</div><div><div class="who">${b.who}<span>${b.role} · in your launch review</span></div><div class="said">"${esc(b.said)}"</div></div></div>`;
   if(S.l5stage!=="video"){
     shell(lv, `${boss}<div class="myplan"><b>Your plan so far:</b> ${planLine}</div>
-      <div class="card stack"><div class="q">You have 4 minutes to prepare. Jot down your reply: what you agree with, where you push back, and the one number or fact that backs you up.</div>
+      <div class="card stack"><div class="q">You have 3 minutes to prepare. Jot down your reply: what you agree with, where you push back, and the one number or fact that backs you up.</div>
       ${ta("d_notes",6,80,"Agree: …\nPush back: …\nProof: …\nSo I propose: …")}
       <div class="row" style="justify-content:flex-end"><button class="btn" id="fin">I'm ready to record</button></div></div>`);
     wc($("#d_notes"),$("#d_notes_w"),80); bindText(["d_notes"]);
     const end=()=>{ S.l5stage="video"; S.l5vStart=Date.now(); save(); l5(); };
-    $("#fin").onclick=end; timer(remain("L5n",4*60),end); return;
+    $("#fin").onclick=end; timer(remain("L5n",3*60),end); return;
   }
-  const left=remain("L5v",10*60);
+  const left=remain("L5v",7*60);
   shell(lv, `${boss}
     <div class="card stack"><div class="q">Now record your reply on your phone: <b>30 seconds</b>, face to camera, talking to ${esc(b.who.split(" ")[0])}. No slides, no script reading.</div>
     <ol class="steps">
@@ -718,7 +702,7 @@ function l6(){
     <tbody>${WEEK3.map(r=>`<tr><td>${r[0]}</td><td data-l="Plan">${r[1]}</td><td data-l="Actual">${r[2]}</td><td data-l="Note">${r[3]}</td></tr>`).join("")}</tbody></table></div>
     <div class="q">Rank the four fires: the one you attack first goes on top.</div>
     <div class="bets" id="fires"></div>
-    <label class="f">For your top two: the first thing you do today, who you call, and the number that tells you it's fixed.${ta("f_plan",6,120,"#1 … today I… I call… fixed when…\n#2 …")}</label>
+    <label class="f">For your top fire: the first thing you do today, who you call, and the number that tells you it's fixed.${ta("f_plan",4,70,"Today I… I call… fixed when…")}</label>
     <div class="alert"><b>WhatsApp from the founder:</b> "We're 25% behind. Let's run 30% off on the website and all marketplaces this weekend to catch up."</div>
     <label class="f">Your reply to the founder. Write it the way you'd actually send it.${ta("f_reply",4,80)}</label>
     <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="fin">Submit</button></div></div>`);
@@ -727,7 +711,7 @@ function l6(){
     $("#fires").querySelectorAll(".mv").forEach(m=>m.onclick=()=>{const i=+m.dataset.i,j=i+ +m.dataset.d; [o[i],o[j]]=[o[j],o[i]]; save(); draw();});
   };
   draw();
-  [["f_plan",120],["f_reply",80]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m)); bindText(["f_plan","f_reply"]);
+  [["f_plan",70],["f_reply",80]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m)); bindText(["f_plan","f_reply"]);
   const end=()=>next("L6",{"L6 Fire order":S.a.fireOrder.map((k,i)=>`${i+1}. ${FIRES.find(f=>f.k===k).t}`).join("\n"),"L6 Top-two plan":S.a.f_plan||"","L6 Founder reply":S.a.f_reply||""});
   $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
 }
@@ -740,10 +724,9 @@ function l7(){
     <div class="tbl pl"><table><thead><tr><th>Line</th><th>Plan</th><th>Actual</th></tr></thead>
     <tbody>${PL.map(r=>`<tr><td>${r[0]}</td><td data-l="Plan">${r[1]}</td><td data-l="Actual">${r[2]}</td></tr>`).join("")}</tbody></table></div>
     <label class="f">TL;DR for the founder: what happened, in two lines.${ta("r_tldr",3,50)}</label>
-    <label class="f">One gross margin lever, with a rough ₹ impact per month.${ta("r_gm",3,50)}</label>
-    <label class="f">Your three actions for month 2, each with an owner.${ta("r_next",4,70,"1. … (owner)\n2. …\n3. …")}</label>
+    <label class="f">Your two actions for month 2, each with an owner.${ta("r_next",3,50,"1. … (owner)\n2. …")}</label>
     <div class="row" style="justify-content:flex-end"><button class="btn" id="fin">Submit and finish</button></div></div>`);
-  [["r_tldr",50],["r_gm",50],["r_next",70]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m)); bindText(["r_tldr","r_gm","r_next"]);
+  [["r_tldr",50],["r_next",50]].forEach(([id,m])=>wc($("#"+id),$("#"+id+"_w"),m)); bindText(["r_tldr","r_next"]);
   const end=()=>{ endLevel("L7"); S.step="done"; save(); render(); };
   $("#fin").onclick=end; timer(remain(lv.id, lv.min*60),end);
 }
@@ -755,7 +738,7 @@ function charsTyped(){
 }
 function finalFields(){
   const a=S.a;
-  return {"L7 TL;DR":a.r_tldr||"","L7 GM lever":a.r_gm||"","L7 Month-2 actions":a.r_next||"",
+  return {"L7 TL;DR":a.r_tldr||"","L7 Month-2 actions":a.r_next||"",
     "Total minutes":S.t0?Math.round((Date.now()-S.t0)/60000):0,
     "Minutes per level":LEVELS.map(l=>`${l.id} ${S.lvT[l.id]!=null?Math.round(S.lvT[l.id]/6)/10:"–"}/${l.min}`).join(", "),
     "Tab switches":S.tabs,"Paste attempts":S.pastes,"Reloads":S.reloads,"Case file opens":S.dossierOpens||0,
